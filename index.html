@@ -4,57 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kitchen Food by Putri</title>
-    
-    <!-- Pustaka (Libraries) --><script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+
+    <!-- Pustaka (Libraries) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- Firebase V9 Modular Imports --><script type="module">
+
+    <!-- Firebase V9 Modular Imports -->
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp, doc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Mengekspos fungsi Firebase ke lingkup global agar dapat digunakan dalam script Babel
+        // Expose Firebase functions to the global scope for use in the Babel script
         window.firebase = {
             initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged,
             getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp, doc, setLogLevel
         };
     </script>
 
-    <!-- CSS KUSTOM -->
+    <!-- CUSTOM CSS -->
     <style>
-    /* --- Smooth basic (safe) --- */
-		html {
-  		scroll-behavior: smooth; /* anchor link smooth */
-  		-webkit-font-smoothing: antialiased;
-				}
-
-		/* momentum di iOS / touch */
-			html, body {
-  				-webkit-overflow-scrolling: touch;
-					}
-
-				/* optional: sedikit penghalus visual saat scroll (bisa dihapus) */
-			body {
-  				/* jangan ubah posisi atau overflow di sini — hanya visual */
-  				-webkit-tap-highlight-color: rgba(0,0,0,0);
-					}
+        /* --- BASE STYLE AND COLORS --- */
         body {
             font-family: 'Poppins', sans-serif;
             scroll-behavior: smooth;
-            background-color: #F8F4E1; /* Krem */
-            color: #4A2C2A; /* Cokelat Tua */
+            background-color: #F8F4E1; /* Cream */
+            color: #4A2C2A; /* Dark Brown */
         }
         .serif-font {
             font-family: 'Playfair Display', serif;
         }
         .bg-brownies {
-            background-color: #D4AF98; 
-            background-image: 
+            background-color: #D4AF98;
+            background-image:
+                /* Transparent overlay for readability */
                 linear-gradient(rgba(248, 244, 225, 0.7), rgba(248, 244, 225, 0.7)),
-                url('https://images.unsplash.com/photo-1542178243-bc20204b77f1?q=80&w=1920&auto=format&fit=crop');
+                /* Hero Image */
+                url('bg.jpg'); 
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -62,7 +51,7 @@
         }
         .glass-nav {
             background: rgba(248, 244, 225, 0.9);
-            backdrop-filter: blur(40px);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(74, 44, 42, 0.1);
         }
         .card-bg {
@@ -71,17 +60,17 @@
             color: #4A2C2A;
         }
         .card-bg:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             border-color: #FFC0CB;
         }
         .text-primary-accent {
-            color: #FF69B4; /* Pink Cerah */
+            color: #FF69B4; /* Bright Pink */
         }
         .text-secondary-accent {
-            color: #A7D7C5; /* Hijau Muda */
+            color: #A7D7C5; /* Light Green */
         }
         .btn-primary {
-            background-color: #FFC0CB; /* Pink Pudar */
+            background-color: #FFC0CB; /* Pale Pink */
             color: #4A2C2A;
         }
         .btn-primary:hover {
@@ -89,7 +78,7 @@
             color: white;
         }
         .btn-accent {
-            background-color: #A7D7C5; /* Hijau Muda */
+            background-color: #A7D7C5; /* Light Green */
             color: #4A2C2A;
         }
         .btn-whatsapp {
@@ -117,7 +106,7 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        /* Animasi Modal */
+        /* Modal Animation */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
@@ -129,37 +118,37 @@
 
     <script type="text/babel">
         const { useState, useEffect, useMemo, useCallback, memo } = React;
-        
+
         // ===================================================================
-        // 1. KONSTANTA DAN DATA PRODUK
+        // 1. CONSTANTS AND PRODUCT DATA
         // ===================================================================
-        const WHATSAPP_NUMBER = "6285649681417";
+        const WHATSAPP_NUMBER = "6285745706419";
         const TESTI_FALLBACK_IMAGE = 'https://placehold.co/100x100/F8F4E1/4A2C2A?text=FOTO+KUE';
 
         const products = [
-            { id: 1, name: "Fudgy Brownies Original", price: 85000, desc: "Brownies cokelat klasik dengan tekstur fudgy, crust renyah, dan rasa cokelat yang intens.", image: "standar.jpg" },
-            { id: 2, name: "Fudgy Brownies Mini", price: 45000, desc: "Brownies dengan ukuran mini, tidak mengurangi rasa tapi selalu maksimal rasa cokelatnya.", image: "mini.jpg" },
-            { id: 3, name: "Brownies Keju Lumer", price: 60000, desc: "Perpaduan manisnya cokelat fudgy dan gurihnya keju cheddar parut di bagian atas.", image: "https://images.unsplash.com/photo-1574085733277-851d9d856a3a?q=80&w=600&auto=format&fit=crop" },
-            { id: 4, name: "Bolu Ketan Hitam Keju Lumer", price: 75000, desc: "Brownies premium dengan topping biskuit karamel Lotus dan selai Biscoff yang lumer.", image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?q=80&w=600&auto=format&fit=crop" },
-            { id: 5, name: "Bolu Ketan Hitam Mini Keju Lumer", price: 70000, desc: "Brownies dengan warna merah merona, rasa khas red velvet, dan swirl cream cheese yang lembut.", image: "https://images.unsplash.com/photo-1619149651177-b088319f39e3?q=80&w=600&auto=format&fit=crop" },
-            { id: 6, name: "Klappertart", price: 68000, desc: "Menggunakan bubuk matcha asli. Wangi teh hijaunya yang unik berpadu sempurna dengan tekstur fudgy.", image: "https://images.unsplash.com/photo-1515037893149-de7f840978e2?q=80&w=600&auto=format&fit=crop" }
+            { id: 1, name: "Fudgy Brownies Original", price: 55000, desc: "Brownies cokelat klasik dengan tekstur fudgy, crust renyah, dan rasa cokelat yang intens.", image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=600&auto=format&fit=crop" },
+            { id: 2, name: "Brownies Almond Panggang", price: 65000, desc: "Brownies dengan taburan kacang almond panggang yang melimpah, memberikan sensasi gurih dan renyah di setiap gigitan.", image: "https://images.unsplash.com/photo-1589218436045-ee320057f443?q=80&w=600&auto=format&fit=crop" },
+            { id: 3, name: "Choco Cheese Brownies", price: 60000, desc: "Perpaduan manisnya cokelat fudgy dan gurihnya keju cheddar parut di bagian atas.", image: "https://images.unsplash.com/photo-1574085733277-851d9d856a3a?q=80&w=600&auto=format&fit=crop" },
+            { id: 4, name: "Lotus Biscoff Delight", price: 75000, desc: "Brownies premium dengan topping biskuit karamel Lotus dan selai Biscoff yang lumer.", image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?q=80&w=600&auto=format&fit=crop" },
+            { id: 5, name: "Red Velvet Cheese", price: 70000, desc: "Brownies dengan warna merah merona, rasa khas red velvet, dan swirl cream cheese yang lembut.", image: "https://images.unsplash.com/photo-1619149651177-b088319f39e3?q=80&w=600&auto=format&fit=crop" },
+            { id: 6, name: "Matcha Greentea", price: 68000, desc: "Menggunakan bubuk matcha asli. Wangi teh hijaunya yang unik berpadu sempurna dengan tekstur fudgy.", image: "https://images.unsplash.com/photo-1515037893149-de7f840978e2?q=80&w=600&auto=format&fit=crop" }
         ];
 
         // ===================================================================
-        // 2. UTILITAS DAN ICON
+        // 2. UTILITIES AND ICONS
         // ===================================================================
 
-        // Format Rupiah
+        // Rupiah Formatter
         const formatRupiah = (val) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
 
-        // Format Waktu
+        // Time Formatter
         const formatTimestamp = (timestamp) => {
             if (!timestamp || typeof timestamp.toDate !== 'function') return 'Baru saja';
             const date = timestamp.toDate();
             return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
         };
-        
-        // Komponen Icon
+
+        // Icon Components (Lucide-react equivalent)
         const Icons = {
             Cart: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>,
             Menu: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
@@ -169,24 +158,24 @@
             Star: ({fill}) => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={fill ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
             Image: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.08-3.08A2 2 0 0 0 15 11h-1a2 2 0 0 0-1.2.6l-2.8 2.8A2 2 0 0 1 9 17h-1"/></svg>,
             Loading: () => <div className="loading-ring"></div>,
-            // Icons lainnya tetap ada...
             Phone: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
             ChevronRight: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
             Instagram: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>,
+            Trash2: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
+            CheckCircle: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
         };
 
 
         // ===================================================================
-        // 3. KOMPONEN UTAMA (MODAL & CARD)
+        // 3. CORE COMPONENTS (MODAL & CARD)
         // ===================================================================
 
-        // --- 3.1. Modal Gambar (Zoom) ---
+        // --- 3.1. Image Modal (Zoom) ---
         function ImageModal({ imageUrl, onClose, altText }) {
-            if (!imageUrl) return null; 
+            if (!imageUrl) return null;
 
-            // Logic image modal tetap sama
             const [validImageUrl, setValidImageUrl] = useState(imageUrl);
-            
+
             useEffect(() => {
                 setValidImageUrl(imageUrl);
                 const handleEscape = (event) => { if (event.key === 'Escape') onClose(); };
@@ -195,26 +184,26 @@
             }, [imageUrl, onClose]);
 
             return (
-                <div 
+                <div
                     className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 animate-fade-in"
                     onClick={onClose}
                 >
-                    <div 
+                    <div
                         className="relative max-w-4xl w-full max-h-[95vh] bg-white rounded-xl shadow-2xl p-4 md:p-6 animate-zoom-in"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <button 
-                            onClick={onClose} 
+                        <button
+                            onClick={onClose}
                             className="absolute -top-3 -right-3 md:top-3 md:right-3 bg-red-600 text-white rounded-full p-2 text-sm z-10 hover:bg-red-700 transition shadow-lg ring-4 ring-white"
                             aria-label="Tutup gambar"
                         >
                             <Icons.X />
                         </button>
-                        
-                        <img 
-                            src={validImageUrl} 
-                            alt={altText || "Gambar Diperbesar"} 
-                            className="max-w-full max-h-[85vh] w-full object-contain rounded-lg" 
+
+                        <img
+                            src={validImageUrl}
+                            alt={altText || "Gambar Diperbesar"}
+                            className="max-w-full max-h-[85vh] w-full object-contain rounded-lg"
                             onError={() => {setValidImageUrl('https://placehold.co/800x600/6b7280/ffffff?text=Gambar+Gagal+Dimuat');}}
                         />
                         <p className="text-center text-xs md:text-sm text-stone-500 mt-3">{altText || "Gambar Produk"}</p>
@@ -223,7 +212,7 @@
             );
         }
 
-        // --- 3.2. Card Produk (Memoized) ---
+        // --- 3.2. Product Card (Memoized) ---
         const ProductCard = memo(function ProductCardComponent({ product, handleAddToCart, handleViewImage }) {
             const [imageUrl, setImageUrl] = useState(product.image);
 
@@ -233,12 +222,12 @@
             };
 
             return (
-                <div 
+                <div
                     className={`card-bg rounded-xl overflow-hidden shadow-lg hover:shadow-2xl duration-300 transform hover:-translate-y-1 border`}
                 >
-                    <img 
-                        src={imageUrl} 
-                        alt={product.name} 
+                    <img
+                        src={imageUrl}
+                        alt={product.name}
                         className="w-full h-48 object-cover object-center cursor-pointer transition duration-300 hover:scale-[1.05]"
                         onError={handleImageError}
                         onClick={() => handleViewImage(imageUrl, product.name)}
@@ -249,8 +238,8 @@
                             {formatRupiah(product.price)}
                         </p>
                         <p className="text-gray-600 text-sm mb-6 line-clamp-3 h-[4.5em]">{product.desc}</p>
-                        
-                        <button 
+
+                        <button
                             onClick={() => handleAddToCart(product.id)}
                             className="w-full py-3 rounded-xl font-bold btn-accent shadow-md transition hover:ring-2 ring-primary-accent"
                         >
@@ -263,18 +252,18 @@
 
 
         // ===================================================================
-        // 4. KOMPONEN FIREBASE (TESTIMONI)
+        // 4. FIREBASE COMPONENTS (TESTIMONIALS)
         // ===================================================================
 
-        // --- 4.1. Card Testimoni ---
+        // --- 4.1. Testimonial Card ---
         const RatingStars = ({ rating }) => {
             const stars = [];
             for (let i = 1; i <= 5; i++) {
                 const isFilled = i <= rating;
                 stars.push(
-                    <Icons.Star 
-                        key={i} 
-                        fill={isFilled} 
+                    <Icons.Star
+                        key={i}
+                        fill={isFilled}
                         className={isFilled ? 'text-amber-500' : 'text-gray-300'}
                     />
                 );
@@ -318,8 +307,8 @@
                                     onError={handleImageError}
                                     onClick={() => handleViewImage(testimonial.imageUrl, `Testimoni dari ${testimonial.name}`)}
                                 />
-                                <button 
-                                    onClick={() => handleViewImage(testimonial.imageUrl, `Testimoni dari ${testimonial.name}`)} 
+                                <button
+                                    onClick={() => handleViewImage(testimonial.imageUrl, `Testimoni dari ${testimonial.name}`)}
                                     className="absolute inset-0 flex items-center justify-center text-white bg-black/40 rounded-lg opacity-0 hover:opacity-100 transition duration-300"
                                     aria-label="Lihat Foto Testimoni"
                                 >
@@ -332,11 +321,11 @@
             );
         }
 
-        // --- 4.2. Formulir Testimoni ---
+        // --- 4.2. Testimonial Form ---
         function TestimonialForm({ db, userId }) {
             const [name, setName] = useState('');
             const [comment, setComment] = useState('');
-            const [imageUrl, setImageUrl] = useState(''); 
+            const [imageUrl, setImageUrl] = useState('');
             const [rating, setRating] = useState(5);
             const [isSubmitting, setIsSubmitting] = useState(false);
             const [message, setMessage] = useState('');
@@ -347,20 +336,20 @@
                     setMessage("Nama dan Testimoni wajib diisi.");
                     return;
                 }
-                
+
                 setIsSubmitting(true);
                 setMessage('');
 
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                 const collectionPath = `artifacts/${appId}/public/data/testimonials`;
-                
+
                 try {
-                    await firebase.addDoc(firebase.collection(db, collectionPath), {
+                    await window.firebase.addDoc(window.firebase.collection(db, collectionPath), {
                         name: name.trim(),
                         comment: comment.trim(),
                         rating: rating,
-                        imageUrl: imageUrl.trim() || null, 
-                        createdAt: firebase.serverTimestamp(),
+                        imageUrl: imageUrl.trim() || null,
+                        createdAt: window.firebase.serverTimestamp(),
                         userId: userId
                     });
 
@@ -375,7 +364,7 @@
                     setTimeout(() => setMessage(''), 5000);
                 }
             };
-            
+
             const renderStars = (currentRating) => {
                 const stars = [];
                 for (let i = 1; i <= 5; i++) {
@@ -403,8 +392,7 @@
                             <div className="flex space-x-1">{renderStars(rating)}</div>
                         </div>
 
-                        {/* Input Nama, URL Foto, Komentar tetap sama... */}
-                        {/* Nama */}
+                        {/* Input Nama */}
                         <div>
                             <label htmlFor="name" className="block text-sm font-medium text-4A2C2A mb-1">Nama Anda:</label>
                             <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required disabled={isSubmitting} className="w-full p-3 border rounded-lg transition form-input-field"/>
@@ -415,13 +403,13 @@
                             <input id="imageUrl" type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste link foto di sini" disabled={isSubmitting} className="w-full p-3 border rounded-lg transition form-input-field"/>
                             <p className="text-xs text-muted mt-1">Hanya mendukung link langsung ke gambar (.jpg, .png, dll.)</p>
                         </div>
-                        {/* Komentar */}
+                        {/* Comment */}
                         <div>
                             <label htmlFor="comment" className="block text-sm font-medium text-4A2C2A mb-1">Testimoni Anda:</label>
                             <textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)} rows="3" required disabled={isSubmitting} className="w-full p-3 border rounded-lg transition form-input-field"></textarea>
                         </div>
-                        
-                        {/* Tombol Submit */}
+
+                        {/* Submit Button */}
                         <button type="submit" disabled={isSubmitting} className={`w-full py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 ${isSubmitting ? 'bg-gray-400 cursor-not-allowed text-white' : 'btn-accent shadow-lg'}`}>
                             {isSubmitting ? (<><Icons.Loading /> Mengirim...</>) : ('Kirim Testimoni')}
                         </button>
@@ -432,34 +420,38 @@
         }
 
         // ===================================================================
-        // 5. KOMPONEN LAYOUT
+        // 5. LAYOUT COMPONENTS
         // ===================================================================
 
-        // --- 5.1. Header Navigasi ---
+        // --- 5.1. Navigation Header ---
         function Header({ isMenuOpen, setIsMenuOpen, isCartOpen, setIsCartOpen, cart }) {
             return (
                 <header id="top" className="fixed top-0 left-0 w-full z-50 glass-nav shadow-md">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-                        <a href="#top" className="text-2xl font-bold serif-font text-primary-accent hover:text-pink-600 transition">Kitchen Food by Putri</a>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
                         
-                        {/* Desktop Nav */}
+                        {/* 1. LEFT: Logo */}
+                        <div className="flex-1 flex justify-start">
+                            <a href="#top" className="text-2xl font-bold serif-font text-primary-accent hover:text-pink-600 transition">Kitchen Food</a>
+                        </div>
+
+                        {/* 2. MIDDLE: Desktop Nav */}
                         <nav className="hidden md:flex space-x-8">
-                            <a href="#produk" className="text-4A2C2A font-medium hover:text-primary-accent transition">Produk</a>
-                            <a href="#testimoni" className="text-4A2C2A font-medium hover:text-primary-accent transition">Testimoni</a>
-                            <a href="#kontak" className="text-4A2C2A font-medium hover:text-primary-accent transition">Kontak</a>
+                            <a href="#produk" onClick={() => setIsMenuOpen(false)} className="text-4A2C2A font-medium hover:text-primary-accent transition">Produk</a>
+                            <a href="#testimoni" onClick={() => setIsMenuOpen(false)} className="text-4A2C2A font-medium hover:text-primary-accent transition">Testimoni</a>
+                            <a href="#kontak" onClick={() => setIsMenuOpen(false)} className="text-4A2C2A font-medium hover:text-primary-accent transition">Kontak</a>
                         </nav>
 
-                        {/* Buttons */}
-                        <div className="flex items-center space-x-3">
+                        {/* 3. RIGHT: Buttons */}
+                        <div className="flex-1 flex items-center justify-end space-x-3">
                             <button onClick={() => setIsCartOpen(true)} className="relative p-2 rounded-full btn-primary shadow-sm hover:ring-2 ring-primary-accent transition" aria-label="Keranjang Belanja">
                                 <Icons.Cart />
                                 {Object.keys(cart).length > 0 && (
                                     <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full">
-                                        {Object.keys(cart).length}
+                                        {Object.values(cart).reduce((sum, qty) => sum + qty, 0)}
                                     </span>
                                 )}
                             </button>
-                            
+
                             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-full btn-primary md:hidden shadow-sm hover:ring-2 ring-primary-accent transition" aria-label="Toggle Menu">
                                 {isMenuOpen ? <Icons.X /> : <Icons.Menu />}
                             </button>
@@ -500,19 +492,19 @@
             );
         }
 
-        // --- 5.3. Produk Section ---
+        // --- 5.3. Products Section ---
         function ProductsSection({ handleAddToCart, handleViewImage }) {
             return (
                 <section id="produk" className="py-16 md:py-24 bg-white">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-4xl md:text-5xl font-bold serif-font text-center mb-4 text-primary-accent">Pilihan Produk Kami</h2>
+                        <h2 className="text-4xl md:text-5xl font-bold serif-font text-center mb-4 text-primary-accent">Pilihan Brownies Kami</h2>
                         <p className="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Jelajahi berbagai varian rasa spesial yang kami siapkan. Setiap gigitan adalah kebahagiaan.</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {products.map(product => (
-                                <ProductCard 
-                                    key={product.id} 
-                                    product={product} 
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
                                     handleAddToCart={handleAddToCart}
                                     handleViewImage={handleViewImage}
                                 />
@@ -523,7 +515,7 @@
             );
         }
 
-        // --- 5.4. Testimoni Section ---
+        // --- 5.4. Testimonials Section ---
         function TestimonialsSection({ testimonials, loadingTesti, db, userId, handleViewImage }) {
             return (
                 <section id="testimoni" className="bg-F8F4E1 py-16 md:py-24">
@@ -531,7 +523,7 @@
                         <h2 className="text-4xl md:text-5xl font-bold serif-font text-center mb-4 text-primary-accent">Apa Kata Pelanggan Kami?</h2>
                         <p className="text-center text-lg text-muted mb-12 max-w-3xl mx-auto">Bukti kelezatan dan kualitas produk Kitchen Food by Putri langsung dari pelanggan setia.</p>
 
-                        {/* Daftar Testimoni */}
+                        {/* Testimonials List */}
                         {loadingTesti && (
                             <div className="flex justify-center items-center py-10">
                                 <Icons.Loading />
@@ -542,7 +534,7 @@
                         {!loadingTesti && testimonials.length === 0 && (
                             <p className="text-center text-muted py-10">Belum ada testimoni. Jadilah yang pertama!</p>
                         )}
-                        
+
                         {!loadingTesti && testimonials.length > 0 && (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {testimonials.map(t => (
@@ -550,15 +542,15 @@
                                 ))}
                             </div>
                         )}
-                        
-                        {/* Formulir Testimoni */}
+
+                        {/* Testimonial Form */}
                         <TestimonialForm db={db} userId={userId} />
                     </div>
                 </section>
             );
         }
 
-        // --- 5.5. Kontak dan Footer ---
+        // --- 5.5. Contact and Footer ---
         function ContactFooter({ userId }) {
             return (
                 <footer id="kontak" className="footer-bg pt-12 pb-8">
@@ -585,7 +577,7 @@
                                 </ul>
                             </div>
                         </div>
-                        
+
                         <div className="text-center text-sm text-F8F4E1/60">
                             &copy; {new Date().getFullYear()} Kitchen Food by Putri. | User ID Anda: {userId || 'Authenticating...'}
                         </div>
@@ -594,80 +586,172 @@
             );
         }
 
-        // --- 5.6. Cart Side Panel ---
+        // --- 5.6. Cart Side Panel (VERSI TERBARU: HEADER & FOOTER PUTIH/HITAM) ---
         function CartSidePanel({ isCartOpen, setIsCartOpen, cartItems, cartTotal, handleUpdateCart, handleClearCart, generateWhatsappMessage }) {
+
+            // Biaya pengiriman tiruan
+            const subtotal = cartTotal;
+            const shippingCost = 25000;
+            const total = subtotal + shippingCost;
+            
             return (
-                <div 
+                <div
+                    // Full screen overlay dan animasi fade
                     className={`fixed inset-0 z-50 transition-opacity duration-300 ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 hidden'}`}
-                    onClick={() => setIsCartOpen(false)}
+                    onClick={() => setIsCartOpen(false)} // Tutup saat klik di luar
                 >
                     <div className="absolute inset-0 bg-black/50"></div>
-                    
-                    <div 
+
+                    <div
+                        // Panel utama, meluncur dari kanan
                         className={`fixed right-0 top-0 h-full w-full max-w-md shadow-2xl transition-transform duration-300 transform ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="flex flex-col h-full bg-stone-700">
-                            
-                            {/* Header */}
-                            <div className="p-5 flex justify-between items-center cart-header-bg rounded-t-xl">
-                                <h2 className="text-2xl font-bold serif-font text-secondary-accent">Keranjang Belanja</h2>
-                                <button onClick={() => setIsCartOpen(false)} className="p-1 rounded-full text-F8F4E1 hover:bg-white/20 transition" aria-label="Tutup Keranjang">
-                                    <Icons.X />
-                                </button>
-                            </div>
+                        {/* Kontainer Panel: Menggunakan bg-gray-50 untuk sedikit tekstur dan text-black */}
+                        <div className="flex flex-col h-full bg-gray-50 shadow-xl text-black">
 
-                            {/* Daftar Item */}
-                            <div className="flex-1 overflow-y-auto p-5 cart-body-bg space-y-4">
+                            {/* 1. CART HEADER - PUTIH & HITAM */}
+                            <header className="p-4 sm:p-6 sticky top-0 bg-white shadow-md z-10 text-black border-b border-gray-100">
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-xl sm:text-2xl font-bold flex items-center serif-font">
+                                        <Icons.Cart className="mr-2 h-6 w-6" />
+                                        Keranjang Belanja
+                                        <span className="ml-2 text-sm font-semibold text-gray-500">
+                                            ({cartItems.length})
+                                        </span>
+                                    </h2>
+                                    <button
+                                        type="button"
+                                        className="p-1 rounded-full text-black hover:text-red-600 transition-colors"
+                                        onClick={() => setIsCartOpen(false)}
+                                        aria-label="Tutup Keranjang"
+                                    >
+                                        <Icons.X className="h-6 w-6" />
+                                    </button>
+                                </div>
+                                <p className="mt-1 text-sm text-gray-600">
+                                    Lanjut ke pembayaran sebelum kehabisan!
+                                </p>
+                            </header>
+
+                            {/* 2. ITEM LIST (Scrollable) - Latar belakang F8F4E1 (Cream) */}
+                            <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 space-y-4 bg-F8F4E1 text-black">
                                 {cartItems.length === 0 ? (
-                                    <div className="text-center py-10 text-F8F4E1/80">
-                                        <Icons.Cart />
-                                        <p className="mt-3">Keranjang Anda kosong. Yuk, pilih brownies favorit!</p>
+                                    <div className="text-center py-10 text-gray-600 bg-white p-6 rounded-xl shadow-inner border border-dashed border-primary-accent/30">
+                                        <Icons.CheckCircle className="mx-auto h-12 w-12 text-green-500" />
+                                        <p className="mt-4 text-lg font-medium">Keranjang Anda kosong.</p>
+                                        <p className="mt-1 text-sm">Mari mulai berbelanja!</p>
+                                        <a onClick={() => setIsCartOpen(false)} href="#produk" className="mt-4 inline-flex items-center text-sm font-medium text-primary-accent hover:text-pink-600 transition">
+                                            Lihat Produk Sekarang <Icons.ChevronRight className="h-4 w-4 ml-1" />
+                                        </a>
                                     </div>
                                 ) : (
                                     cartItems.map(item => (
-                                        <div key={item.id} className="flex items-center bg-stone-800 p-3 rounded-lg shadow-md">
-                                            <div className="flex-1 min-w-0">
-                                                <p className="font-semibold text-lg text-F8F4E1">{item.name}</p>
-                                                <p className="text-sm text-D4AF98">{formatRupiah(item.price)}</p>
+                                        <div key={item.id} className="flex py-3 px-2 bg-white rounded-lg shadow-sm border border-gray-100">
+                                            <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    className="w-full h-full object-cover object-center"
+                                                    onError={(e) => { e.target.onerror = null; e.target.src=`https://placehold.co/50x50/D4AF98/4A2C2A?text=${item.name.charAt(0)}` }}
+                                                />
                                             </div>
-                                            <div className="flex items-center space-x-2 ml-4">
-                                                <button onClick={() => handleUpdateCart(item.id, item.quantity - 1)} className="p-1 rounded-full btn-primary hover:bg-FF69B4 text-4A2C2A transition" aria-label="Kurangi jumlah"><Icons.Minus /></button>
-                                                <span className="font-bold w-6 text-center text-F8F4E1">{item.quantity}</span>
-                                                <button onClick={() => handleUpdateCart(item.id, item.quantity + 1)} className="p-1 rounded-full btn-primary hover:bg-FF69B4 text-4A2C2A transition" aria-label="Tambah jumlah"><Icons.Plus /></button>
+
+                                            <div className="ml-4 flex-1 flex flex-col justify-between">
+                                                <div className="flex justify-between">
+                                                    <div>
+                                                        <h3 className="text-base font-semibold text-black line-clamp-1">
+                                                            {item.name}
+                                                        </h3>
+                                                        <p className="mt-0.5 text-sm text-gray-500">{formatRupiah(item.price)}</p>
+                                                    </div>
+                                                    <p className="ml-4 text-base font-medium text-primary-accent">
+                                                        {formatRupiah(item.subtotal)}
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex items-center justify-between text-sm mt-1">
+                                                    {/* Kontrol Kuantitas */}
+                                                    <div className="flex items-center space-x-2 border border-gray-200 rounded-full">
+                                                        <button
+                                                            onClick={() => handleUpdateCart(item.id, item.quantity - 1)}
+                                                            className="p-1 rounded-full text-black hover:bg-gray-100 transition-colors"
+                                                            aria-label="Kurangi kuantitas"
+                                                        >
+                                                            <Icons.Minus />
+                                                        </button>
+                                                        <span className="text-black font-medium w-6 text-center">{item.quantity}</span>
+                                                        <button
+                                                            onClick={() => handleUpdateCart(item.id, item.quantity + 1)}
+                                                            className="p-1 rounded-full text-black hover:bg-gray-100 transition-colors"
+                                                            aria-label="Tambah kuantitas"
+                                                        >
+                                                            <Icons.Plus />
+                                                        </button>
+                                                    </div>
+
+                                                    {/* Tombol Hapus */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleUpdateCart(item.id, 0)} // Set quantity to 0 to remove
+                                                        className="font-medium text-red-500 hover:text-red-700 flex items-center transition-colors"
+                                                        aria-label="Hapus item"
+                                                    >
+                                                        <Icons.Trash2 className="h-4 w-4 mr-1" />
+                                                        Hapus
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     ))
                                 )}
                             </div>
-                            
-                            {/* Footer / Checkout */}
-                            <div className="p-5 cart-footer-bg rounded-b-xl border-t-2">
-                                <div className="flex justify-between items-center mb-4">
-                                    <span className="text-xl font-semibold text-secondary-accent">Total:</span>
-                                    <span className="text-2xl font-bold text-primary-accent">{formatRupiah(cartTotal)}</span>
+
+                            {/* 3. CHECKOUT FOOTER - PUTIH & HITAM */}
+                            <footer className="border-t border-gray-200 p-4 sm:p-6 sticky bottom-0 bg-white text-black shadow-inner">
+                                {/* Ringkasan Harga */}
+                                <div className="space-y-2 text-base font-medium">
+                                    <div className="flex justify-between">
+                                        <p className="text-gray-700">Subtotal:</p>
+                                        <p className="font-semibold text-black">{formatRupiah(subtotal)}</p>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <p className="text-gray-700">Biaya Pengiriman (Estimasi):</p>
+                                        <p className="font-semibold text-black">{formatRupiah(shippingCost)}</p>
+                                    </div>
                                 </div>
                                 
-                                <a 
-                                    href={generateWhatsappMessage()} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className={`w-full py-3 rounded-xl font-bold text-lg transition flex items-center justify-center gap-2 shadow-lg ${cartItems.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'btn-whatsapp hover:bg-1EBE54'}`}
-                                    onClick={cartItems.length > 0 ? handleClearCart : (e) => e.preventDefault()}
-                                    disabled={cartItems.length === 0}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 12.83 12.83 0 0 1-2.73 3.66 12.82 12.82 0 0 1-3.66 2.73 8.38 8.38 0 0 1-3.8.9c-1.55 0-3-.3-4.36-.9s-2.61-1.42-3.66-2.73A12.83 12.83 0 0 1 2.3 15.3 8.38 8.38 0 0 1 1 11.5C1 6.25 5.25 2 10.5 2h3C18.75 2 23 6.25 23 11.5v3c0 .5-.4 1-1 1h-1.5c-.6 0-1-.4-1-1v-3.5c0-4.14-3.36-7.5-7.5-7.5h-3c-4.14 0-7.5 3.36-7.5 7.5S6.36 19 10.5 19H12c.5 0 1 .4 1 1s-.5 1-1 1H9c-.5 0-1 .4-1 1s.5 1 1 1h3c4.14 0 7.5-3.36 7.5-7.5v-3c0-.5-.4-1-1-1h-1.5c-.6 0-1-.4-1-1z"/></svg>
-                                    {cartItems.length > 0 ? 'Checkout via WhatsApp' : 'Keranjang Kosong'}
-                                </a>
+                                <div className="mt-4 flex justify-between pt-4 border-t border-gray-200">
+                                    <p className="text-lg font-bold">Total (Perkiraan):</p>
+                                    <p className="text-xl font-bold text-primary-accent">{formatRupiah(total)}</p>
+                                </div>
 
-                                <button
-                                    onClick={handleClearCart}
-                                    disabled={cartItems.length === 0}
-                                    className={`w-full mt-2 py-2 rounded-xl text-sm font-semibold transition ${cartItems.length === 0 ? 'text-gray-500 cursor-not-allowed' : 'text-F8F4E1 hover:text-red-400'}`}
-                                >
-                                    Kosongkan Keranjang
-                                </button>
-                            </div>
+                                {/* Tombol Checkout WhatsApp */}
+                                <div className="mt-6">
+                                    <a
+                                        href={generateWhatsappMessage()}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`w-full flex items-center justify-center rounded-xl border border-transparent bg-green-500 px-6 py-3 text-base font-medium text-white shadow-lg hover:bg-green-600 transition-colors ${cartItems.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        onClick={cartItems.length === 0 ? (e) => e.preventDefault() : undefined}
+                                        disabled={cartItems.length === 0}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 12.83 12.83 0 0 1-2.73 3.66 12.82 12.82 0 0 1-3.66 2.73 8.38 8.38 0 0 1-3.8.9c-1.55 0-3-.3-4.36-.9s-2.61-1.42-3.66-2.73A12.83 12.83 0 0 1 2.3 15.3 8.38 8.38 0 0 1 1 11.5C1 6.25 5.25 2 10.5 2h3C18.75 2 23 6.25 23 11.5v3c0 .5-.4 1-1 1h-1.5c-.6 0-1-.4-1-1v-3.5c0-4.14-3.36-7.5-7.5-7.5h-3c-4.14 0-7.5 3.36-7.5 7.5S6.36 19 10.5 19H12c.5 0 1 .4 1 1s-.5 1-1 1H9c-.5 0-1 .4-1 1s.5 1 1 1h3c4.14 0 7.5-3.36 7.5-7.5v-3c0-.5-.4-1-1-1h-1.5c-.6 0-1-.4-1-1z"/></svg>
+                                        {cartItems.length > 0 ? 'Lanjut ke WhatsApp' : 'Keranjang Kosong'}
+                                    </a>
+                                </div>
+
+                                <div className="mt-4 flex justify-center text-center text-sm text-gray-500">
+                                    <button
+                                        type="button"
+                                        onClick={handleClearCart}
+                                        className="font-medium text-red-500 hover:text-red-700 transition-colors disabled:text-gray-400"
+                                        disabled={cartItems.length === 0}
+                                    >
+                                        Kosongkan Seluruh Keranjang
+                                    </button>
+                                </div>
+                            </footer>
                         </div>
                     </div>
                 </div>
@@ -676,18 +760,18 @@
 
 
         // ===================================================================
-        // 6. APLIKASI UTAMA (APP)
+        // 6. MAIN APPLICATION (APP)
         // ===================================================================
 
         function App() {
-            // State UI
+            // UI State
             const [isMenuOpen, setIsMenuOpen] = useState(false);
-            const [cart, setCart] = useState({}); 
+            const [cart, setCart] = useState({}); // {productId: quantity}
             const [isCartOpen, setIsCartOpen] = useState(false);
-            const [selectedImage, setSelectedImage] = useState(null); 
+            const [selectedImage, setSelectedImage] = useState(null);
             const [imageAltText, setImageAltText] = useState('');
-            
-            // State Firebase
+
+            // Firebase State
             const [db, setDb] = useState(null);
             const [userId, setUserId] = useState(null);
             const [testimonials, setTestimonials] = useState([]);
@@ -704,7 +788,8 @@
                     ...prevCart,
                     [productId]: (prevCart[productId] || 0) + 1
                 }));
-            }, []); 
+                setIsCartOpen(true); // Open cart immediately
+            }, []);
 
             const handleUpdateCart = useCallback((productId, quantity) => {
                 setCart(prevCart => {
@@ -723,21 +808,20 @@
                 setIsCartOpen(false);
             }, []);
 
-            // --- LOGIKA FIREBASE (AUTH & FETCHING DATA PUBLIK) ---
-            // Ini adalah bagian KRITIS yang memastikan bug izin hilang.
+            // --- FIREBASE LOGIC (AUTH & FETCHING PUBLIC DATA) ---
             useEffect(() => {
-                if (typeof window.firebase === 'undefined' || !window.firebase.initializeApp) return; 
+                if (typeof window.firebase === 'undefined' || !window.firebase.initializeApp) return;
 
                 try {
                     const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
                     const app = window.firebase.initializeApp(firebaseConfig);
                     const firestore = window.firebase.getFirestore(app);
                     const authInstance = window.firebase.getAuth(app);
-                    
-                    setDb(firestore);
-                    if (window.firebase.setLogLevel) window.firebase.setLogLevel('debug'); 
 
-                    // 1. Inisiasi Auth
+                    setDb(firestore);
+                    if (window.firebase.setLogLevel) window.firebase.setLogLevel('debug');
+
+                    // 1. Initialize Auth
                     const initializeAuth = async () => {
                         try {
                             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -749,56 +833,58 @@
                             console.error("Firebase Auth Error:", e);
                         }
                     };
-                    
-                    let unsubscribeSnapshot = () => {}; 
 
-                    // 2. Listener Auth State
+                    let unsubscribeSnapshot = () => {};
+
+                    // 2. Auth State Listener
                     const unsubscribeAuth = window.firebase.onAuthStateChanged(authInstance, (user) => {
-                        unsubscribeSnapshot(); 
-                        setLoadingTesti(true); 
+                        unsubscribeSnapshot();
+                        setLoadingTesti(true);
 
                         if (user) {
                             setUserId(user.uid);
-                            
-                            // Ambil Testimoni HANYA setelah Auth Sukses
+
+                            // Fetch Testimonials ONLY after successful Auth
                             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                             const collectionPath = `artifacts/${appId}/public/data/testimonials`;
-                            
+
                             const q = window.firebase.query(
                                 window.firebase.collection(firestore, collectionPath)
                             );
-                            
+
                             unsubscribeSnapshot = window.firebase.onSnapshot(q, (snapshot) => {
                                 const loadedTestimonials = snapshot.docs.map(doc => ({
                                     id: doc.id,
                                     ...doc.data()
                                 }));
-                                
+
                                 const sortedTestimonials = loadedTestimonials.sort((a, b) => {
+                                    // Robust timestamp sorting (newest first)
                                     const timeA = a.createdAt && typeof a.createdAt.toDate === 'function' ? a.createdAt.toDate().getTime() : 0;
                                     const timeB = b.createdAt && typeof b.createdAt.toDate === 'function' ? b.createdAt.toDate().getTime() : 0;
-                                    return timeB - timeA; // Newest first
+                                    return timeB - timeA;
                                 });
-                                
+
                                 setTestimonials(sortedTestimonials);
                                 setLoadingTesti(false);
                             }, (error) => {
-                                console.error("Error fetching testimonials: ", error); // Ini adalah error yang hilang
+                                console.error("Error fetching testimonials: ", error);
                                 setLoadingTesti(false);
                             });
 
                         } else {
-                            setUserId(null); 
-                            setTestimonials([]); 
+                            // User signed out or failed to sign in
+                            setUserId(null);
+                            setTestimonials([]);
                             setLoadingTesti(false);
                         }
                     });
 
-                    initializeAuth(); 
-                    
+                    initializeAuth();
+
                     return () => {
                         unsubscribeAuth();
-                        unsubscribeSnapshot(); 
+                        unsubscribeSnapshot();
                     };
 
                 } catch (e) {
@@ -807,16 +893,18 @@
                 }
             }, []);
 
-            // --- Logika Keranjang (Memoized) ---
+            // --- Cart Logic (Memoized) ---
             const cartItems = useMemo(() => {
                 return Object.keys(cart)
                     .filter(productId => cart[productId] > 0)
                     .map(productId => {
                         const product = products.find(p => p.id === parseInt(productId));
+                        // Tambahkan subtotal untuk memudahkan rendering
+                        const quantity = cart[productId];
                         return {
                             ...product,
-                            quantity: cart[productId],
-                            subtotal: product.price * cart[productId]
+                            quantity: quantity,
+                            subtotal: product.price * quantity
                         };
                     });
             }, [cart]);
@@ -826,30 +914,38 @@
             }, [cartItems]);
 
             const generateWhatsappMessage = () => {
-                const itemDetails = cartItems.map(item => 
+                const itemDetails = cartItems.map(item =>
                     `* ${item.name} (${item.quantity} pcs) - ${formatRupiah(item.subtotal)}`
                 ).join('\n');
 
+                // Menggunakan total termasuk biaya pengiriman mock untuk pesan WA
+                const subtotal_ = cartTotal;
+                const shippingCost = 25000;
+                const total_ = subtotal_ + shippingCost;
+
+
                 const message = encodeURIComponent(
-                    `Halo Kitchen Food by Putri!\n\nSaya ingin memesan brownies dengan detail sebagai berikut:\n\n` + 
+                    `Halo Kitchen Food by Putri!\n\nSaya ingin memesan brownies dengan detail sebagai berikut:\n\n` +
                     `--- Daftar Pesanan ---\n` +
-                    `${itemDetails}\n\n` +
-                    `*Total Belanja:* ${formatRupiah(cartTotal)}\n` +
+                    `${itemDetails}\n` +
+                    `*Subtotal:* ${formatRupiah(subtotal_)}\n` +
+                    `*Estimasi Ongkir:* ${formatRupiah(shippingCost)}\n` +
+                    `*Total Perkiraan:* ${formatRupiah(total_)}\n` +
                     `----------------------\n\n` +
                     `Mohon diproses, terima kasih!`
                 );
-                
+
                 return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
             };
 
 
             return (
                 <div className="min-h-screen">
-                    {/* 1. Header dan Navigasi */}
-                    <Header 
-                        isMenuOpen={isMenuOpen} 
-                        setIsMenuOpen={setIsMenuOpen} 
-                        isCartOpen={isCartOpen} 
+                    {/* 1. Header and Navigation */}
+                    <Header
+                        isMenuOpen={isMenuOpen}
+                        setIsMenuOpen={setIsMenuOpen}
+                        isCartOpen={isCartOpen}
                         setIsCartOpen={setIsCartOpen}
                         cart={cart}
                     />
@@ -858,14 +954,14 @@
                         {/* 2. Hero Section */}
                         <Hero />
 
-                        {/* 3. Produk Section */}
-                        <ProductsSection 
+                        {/* 3. Products Section */}
+                        <ProductsSection
                             handleAddToCart={handleAddToCart}
                             handleViewImage={handleViewImage}
                         />
 
-                        {/* 4. Testimoni Section */}
-                        <TestimonialsSection 
+                        {/* 4. Testimonials Section */}
+                        <TestimonialsSection
                             testimonials={testimonials}
                             loadingTesti={loadingTesti}
                             db={db}
@@ -877,8 +973,8 @@
                     {/* 5. Footer */}
                     <ContactFooter userId={userId} />
 
-                    {/* 6. Keranjang Side Panel */}
-                    <CartSidePanel 
+                    {/* 6. Cart Side Panel */}
+                    <CartSidePanel
                         isCartOpen={isCartOpen}
                         setIsCartOpen={setIsCartOpen}
                         cartItems={cartItems}
@@ -888,9 +984,9 @@
                         generateWhatsappMessage={generateWhatsappMessage}
                     />
 
-                    {/* 7. Modal Gambar */}
-                    <ImageModal 
-                        imageUrl={selectedImage} 
+                    {/* 7. Image Modal */}
+                    <ImageModal
+                        imageUrl={selectedImage}
                         onClose={() => setSelectedImage(null)}
                         altText={imageAltText}
                     />
@@ -898,7 +994,7 @@
             );
         }
 
-        // --- RENDER APLIKASI ---
+        // --- RENDER APPLICATION ---
         const rootElement = document.getElementById('root');
         if (rootElement) {
             const root = ReactDOM.createRoot(rootElement);
