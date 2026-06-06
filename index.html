@@ -4,1002 +4,1600 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kitchen Food by Putri</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Fredoka -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Pustaka (Libraries) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <!-- Firebase V9 Modular Imports -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp, doc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Expose Firebase functions to the global scope for use in the Babel script
-        window.firebase = {
-            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged,
-            getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp, doc, setLogLevel
-        };
-    </script>
-
-    <!-- CUSTOM CSS -->
     <style>
-        /* --- BASE STYLE AND COLORS --- */
+        /* =========================================
+           CSS VARIABLES (PALET WARNA & UKURAN)
+           ========================================= */
+        :root {
+            --pink: #FFD1DC;       /* Pink Muda */
+            --mint: #B2F0E6;       /* Hijau Mint */
+            --white: #FFFFFF;      /* Putih */
+            --brown: #5C3D2E;      /* Cokelat Gelap (Teks Utama) */
+            --brown-light: #8B5E3C;/* Cokelat Muda (Teks Sekunder) */
+            --black: #1A1A1A;      /* Hitam (Khusus Sidebar Cart) */
+            --bg-light: #FAFAFA;   /* Background Body */
+            --gray-light: #F4F4F4; /* Background List Cart */
+            
+            --font-heading: 'Fredoka', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            
+            --radius-sm: 12px;
+            --radius-md: 24px;
+            --radius-pill: 50px;
+            
+            --shadow-soft: 0 8px 24px rgba(92, 61, 46, 0.08);
+            --shadow-hover: 0 12px 32px rgba(92, 61, 46, 0.15);
+            
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        html {
+            scroll-behavior: smooth; /* Untuk scroll halus saat klik menu Navigasi */
+        }
+
+        /* Toast Notification (Pesan Sukses) */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--brown);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-family: var(--font-body);
+            text-align: center;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* =========================================
+           RESET & BASIC STYLES
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            scroll-behavior: smooth;
-            background-color: #FFFF; /* White */
-            color: #4A2C2A; /* Dark Brown */
+            font-family: var(--font-body);
+            background-color: var(--bg-light);
+            color: var(--brown);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-        .serif-font {
-            font-family: 'Playfair Display', serif;
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: var(--brown);
+            line-height: 1.2;
         }
-        .bg-brownies {
-            background-color: #D4AF98;
-            background-image:
-                /* Transparent overlay for readability */
-                linear-gradient(rgba(248, 244, 225, 0.7), rgba(248, 244, 225, 0.7)),
-                /* Hero Image */
-                url('bg.jpg'); 
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #4A2C2A;
+
+        a {
+            text-decoration: none;
+            color: inherit;
         }
-        .glass-nav {
-            background: rgba(248, 244, 225, 0.9);
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            font-family: var(--font-body);
+            cursor: pointer;
+            border: none;
+            outline: none;
+            background: none;
+        }
+
+        /* =========================================
+           NAVBAR (STICKY)
+           ========================================= */
+        header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(74, 44, 42, 0.1);
+            z-index: 100;
+            padding: 1rem 5%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
         }
-        .card-bg {
-            background-color: #FFF9F2;
-            border-color: #EAD7D7;
-            color: #4A2C2A;
+
+        /* Kelas yang ditambahkan via JS saat scroll ke bawah */
+        header.scrolled {
+            background-color: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
-        .card-bg:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border-color: #FFC0CB;
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--brown);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .text-primary-accent {
-            color: #FF69B4; /* Bright Pink */
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
         }
-        .text-secondary-accent {
-            color: #A7D7C5; /* Light Green */
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 1rem;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: var(--transition);
         }
-        .btn-primary {
-            background-color: #FFC0CB; /* Pale Pink */
-            color: #4A2C2A;
+
+        .nav-links a:hover {
+            color: var(--mint);
         }
-        .btn-primary:hover {
-            background-color: #FF69B4;
-            color: white;
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--mint);
+            border-radius: 2px;
+            transition: var(--transition);
         }
-        .btn-accent {
-            background-color: #A7D7C5; /* Light Green */
-            color: #4A2C2A;
+
+        .nav-links a:hover::after {
+            width: 100%;
         }
-        .btn-whatsapp {
-            background-color: #25D366;
-            color: white;
+
+        .cart-btn-wrapper {
+            position: relative;
+            background: var(--pink);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
         }
-        .form-input-field {
-            background-color: #FFF9F2;
-            border-color: #EAD7D7;
-            color: #4A2C2A;
+
+        .cart-btn-wrapper:hover {
+            transform: scale(1.1) rotate(-5deg);
+            background: var(--mint);
         }
-        .footer-bg {
-            background-color: #4A2C2A;
-            color: #F8F4E1;
-        }
-        .loading-ring {
-            display: inline-block;
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--brown);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 700;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(74, 44, 42, .3);
             border-radius: 50%;
-            border-top-color: #4A2C2A;
-            animation: spin 1s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--white);
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        /* =========================================
+           HERO SECTION
+           ========================================= */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 4rem 5%;
+            gap: 2rem;
+            min-height: 80vh;
         }
-        /* Modal Animation */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        .animate-zoom-in { animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        .tagline {
+            display: inline-block;
+            background-color: var(--pink);
+            color: var(--brown);
+            padding: 0.4rem 1rem;
+            border-radius: var(--radius-pill);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 span {
+            color: #E27D60; /* A pop of darker orange/pink for emphasis */
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--brown-light);
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            background-color: var(--brown);
+            color: var(--white);
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(92, 61, 46, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(92, 61, 46, 0.3);
+            background-color: #4A3022;
+        }
+
+        /* Hero Visual (Blob) */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .blob {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--mint) 0%, var(--pink) 100%);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morph 8s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes morph {
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            100% { border-radius: 70% 30% 50% 70% / 30% 60% 40% 70%; }
+        }
+
+        .hero-image {
+            width: 320px;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 8px solid var(--white);
+            box-shadow: 0 20px 40px rgba(92, 61, 46, 0.15);
+            animation: float 4s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+            cursor: zoom-in; /* Menambahkan kursor kaca pembesar saat di-hover */
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* =========================================
+           PRODUCT SECTION
+           ========================================= */
+        .products {
+            padding: 4rem 5%;
+            text-align: center;
+        }
+
+        .products h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .products > p {
+            color: var(--brown-light);
+            margin-bottom: 3rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--white);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+            text-align: left;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .product-img {
+            background-color: var(--pink);
+            border-radius: var(--radius-sm);
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .product-card:nth-child(even) .product-img {
+            background-color: var(--mint);
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-desc {
+            font-size: 0.9rem;
+            color: var(--brown-light);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--brown);
+        }
+
+        .add-to-cart {
+            width: 40px;
+            height: 40px;
+            background-color: var(--brown);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .add-to-cart:hover {
+            background-color: var(--mint);
+            color: var(--brown);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* =========================================
+           REVIEWS SECTION
+           ========================================= */
+        .reviews {
+            padding: 4rem 5%;
+            background-color: var(--white);
+            text-align: center;
+        }
+
+        .reviews h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reviews > p {
+            color: var(--brown-light);
+            margin-bottom: 3rem;
+        }
+
+        .reviews-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            text-align: left;
+        }
+
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Kustomisasi scrollbar untuk list review */
+        .review-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .review-list::-webkit-scrollbar-thumb {
+            background-color: var(--pink);
+            border-radius: 10px;
+        }
+
+        .review-card {
+            background-color: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .review-name {
+            font-weight: 700;
+            color: var(--brown);
+        }
+
+        .review-stars {
+            color: #FFD700;
+            font-size: 0.9rem;
+        }
+
+        .review-text {
+            font-size: 0.95rem;
+            color: var(--brown-light);
+            font-style: italic;
+        }
+
+        .review-form-container {
+            background-color: var(--pink);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+        }
+
+        .review-form-container h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-family: var(--font-heading);
+            color: var(--brown);
+        }
+
+        .review-form-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .review-form-container input,
+        .review-form-container select,
+        .review-form-container textarea {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .review-form-container textarea {
+            resize: vertical;
+        }
+
+        @media (max-width: 768px) {
+            .reviews-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* =========================================
+           CART SIDEBAR (PENTING)
+           ========================================= */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .cart-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background-color: var(--gray-light);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        /* Header Cart - Wajib Putih & Hitam */
+        .cart-header {
+            background-color: var(--white);
+            color: var(--black);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #EAEAEA;
+        }
+
+        .cart-header h3 {
+            color: var(--black);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-cart {
+            background: #F4F4F4;
+            color: var(--black);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .close-cart:hover {
+            background: #E0E0E0;
+            transform: scale(1.1);
+        }
+
+        /* Body Cart - List Item */
+        .cart-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .cart-item {
+            background-color: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            position: relative;
+        }
+
+        .cart-item-emoji {
+            background-color: var(--pink);
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+        }
+
+        .cart-item-info h4 {
+            font-size: 1rem;
+            color: var(--brown);
+            margin-bottom: 0.2rem;
+            font-family: var(--font-body);
+            font-weight: 600;
+        }
+
+        .cart-item-price {
+            font-weight: 700;
+            color: var(--brown-light);
+            font-size: 0.9rem;
+        }
+
+        .cart-item-qty {
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+
+        .qty-btn {
+            background: var(--gray-light);
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .remove-item {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            color: #FF5A5F;
+            opacity: 0.6;
+            transition: var(--transition);
+        }
+
+        .remove-item:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Footer Cart - Wajib Putih & Hitam */
+        .cart-footer {
+            background-color: var(--white);
+            color: var(--black);
+            padding: 1.5rem;
+            border-top: 1px solid #EAEAEA;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background-color: var(--black);
+            color: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius-pill);
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .btn-checkout:hover {
+            background-color: #333;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* =========================================
+           MODAL / POP-UP INFORMASI (BANTUAN)
+           ========================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%) scale(0.95);
+            width: 90%;
+            max-width: 500px;
+            background: var(--white);
+            z-index: 2001;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-box.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px dashed var(--pink);
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: var(--gray-light);
+            color: var(--brown);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: var(--pink);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .modal-content {
+            color: var(--brown-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-thumb { background-color: var(--pink); border-radius: 10px; }
+
+        .modal-content ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .modal-content li { margin-bottom: 0.5rem; }
+        .modal-content strong { color: var(--brown); }
+        .modal-content p { margin-bottom: 1rem; }
+
+        /* =========================================
+           IMAGE LIGHTBOX (POP-UP GAMBAR)
+           ========================================= */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Background gelap transparan */
+            backdrop-filter: blur(8px);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .lightbox-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-img {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: var(--radius-md);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            object-fit: contain;
+        }
+
+        .lightbox-overlay.active .lightbox-img {
+            transform: scale(1);
+        }
+
+        .close-lightbox {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--white);
+            color: var(--brown);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3001;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+
+        .close-lightbox:hover {
+            background: var(--pink);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* =========================================
+           RESPONSIVE DESIGN (HP & TABLET)
+           ========================================= */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* Sembunyikan menu di mobile untuk layout minimalis ini */
+            }
+            
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding-top: 2rem;
+            }
+
+            .hero-content {
+                margin: 0 auto;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .blob {
+                width: 300px;
+                height: 300px;
+            }
+
+            .hero-image {
+                width: 220px;
+                height: 220px;
+                border-width: 6px;
+            }
+            
+            .cart-sidebar {
+                max-width: 100%;
+                right: -100%;
+            }
+        }
     </style>
 </head>
-<body class="antialiased">
-    <div id="root"></div>
+<body>
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo, useCallback, memo } = React;
+    <!-- NAVBAR -->
+    <header>
+        <div class="logo">
+            <i data-lucide="cookie" color="#5C3D2E"></i> KitchenFood.Putri
+        </div>
+        <nav class="nav-links">
+            <a href="#hero">Beranda</a>
+            <a href="#products">Menu Spesial</a>
+            <a href="#reviews">Ulasan Pelanggan</a>
+            <a href="#footer">Tentang Kami</a>
+        </nav>
+        <button class="cart-btn-wrapper" id="open-cart-btn" aria-label="Buka Keranjang">
+            <i data-lucide="shopping-bag" color="#5C3D2E" size="20"></i>
+            <span class="cart-badge">3</span>
+        </button>
+    </header>
 
-        // ===================================================================
-        // 1. CONSTANTS AND PRODUCT DATA
-        // ===================================================================
-        const WHATSAPP_NUMBER = "6285745706419";
-        const TESTI_FALLBACK_IMAGE = 'https://placehold.co/100x100/F8F4E1/4A2C2A?text=FOTO+KUE';
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <span class="tagline">100% Homemade</span>
+                <h1>Manisnya Hari Ini <span>Dimulai</span> Dari Sini</h1>
+                <p>Nikmati aneka dessert yang dibuat dengan bahan pilihan dan resep rahasia.</p>
+                <a href="#products" class="btn-primary">
+                    Pesan Sekarang <i data-lucide="arrow-right" size="20"></i>
+                </a>
+            </div>
+            <div class="hero-visual">
+                <div class="blob"></div>
+                <!-- Menggunakan gambar asli berkualitas tinggi & Event onclick Lightbox -->
+                <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=600&auto=format&fit=crop" alt="Premium Brownies" class="hero-image" onclick="openLightbox(this.src)">
+            </div>
+        </section>
 
-        const products = [
-            { id: 1, name: "Fudgy Brownies Original", price: 55000, desc: "Brownies cokelat klasik dengan tekstur fudgy, crust renyah, dan rasa cokelat yang intens.", image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=600&auto=format&fit=crop" },
-            { id: 2, name: "Brownies Almond Panggang", price: 65000, desc: "Brownies dengan taburan kacang almond panggang yang melimpah, memberikan sensasi gurih dan renyah di setiap gigitan.", image: "https://images.unsplash.com/photo-1589218436045-ee320057f443?q=80&w=600&auto=format&fit=crop" },
-            { id: 3, name: "Choco Cheese Brownies", price: 60000, desc: "Perpaduan manisnya cokelat fudgy dan gurihnya keju cheddar parut di bagian atas.", image: "https://images.unsplash.com/photo-1574085733277-851d9d856a3a?q=80&w=600&auto=format&fit=crop" },
-            { id: 4, name: "Lotus Biscoff Delight", price: 75000, desc: "Brownies premium dengan topping biskuit karamel Lotus dan selai Biscoff yang lumer.", image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?q=80&w=600&auto=format&fit=crop" },
-            { id: 5, name: "Red Velvet Cheese", price: 70000, desc: "Brownies dengan warna merah merona, rasa khas red velvet, dan swirl cream cheese yang lembut.", image: "https://images.unsplash.com/photo-1619149651177-b088319f39e3?q=80&w=600&auto=format&fit=crop" },
-            { id: 6, name: "Matcha Greentea", price: 68000, desc: "Menggunakan bubuk matcha asli. Wangi teh hijaunya yang unik berpadu sempurna dengan tekstur fudgy.", image: "https://images.unsplash.com/photo-1515037893149-de7f840978e2?q=80&w=600&auto=format&fit=crop" }
-        ];
-
-        // ===================================================================
-        // 2. UTILITIES AND ICONS
-        // ===================================================================
-
-        // Rupiah Formatter
-        const formatRupiah = (val) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
-
-        // Time Formatter
-        const formatTimestamp = (timestamp) => {
-            if (!timestamp || typeof timestamp.toDate !== 'function') return 'Baru saja';
-            const date = timestamp.toDate();
-            return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
-        };
-
-        // Icon Components (Lucide-react equivalent)
-        const Icons = {
-            Cart: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>,
-            Menu: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
-            X: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
-            Plus: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
-            Minus: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/></svg>,
-            Star: ({fill}) => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={fill ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
-            Image: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.08-3.08A2 2 0 0 0 15 11h-1a2 2 0 0 0-1.2.6l-2.8 2.8A2 2 0 0 1 9 17h-1"/></svg>,
-            Loading: () => <div className="loading-ring"></div>,
-            Phone: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-            ChevronRight: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
-            Instagram: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>,
-            Trash2: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
-            CheckCircle: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
-        };
-
-
-        // ===================================================================
-        // 3. CORE COMPONENTS (MODAL & CARD)
-        // ===================================================================
-
-        // --- 3.1. Image Modal (Zoom) ---
-        function ImageModal({ imageUrl, onClose, altText }) {
-            if (!imageUrl) return null;
-
-            const [validImageUrl, setValidImageUrl] = useState(imageUrl);
-
-            useEffect(() => {
-                setValidImageUrl(imageUrl);
-                const handleEscape = (event) => { if (event.key === 'Escape') onClose(); };
-                document.addEventListener('keydown', handleEscape);
-                return () => document.removeEventListener('keydown', handleEscape);
-            }, [imageUrl, onClose]);
-
-            return (
-                <div
-                    className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 animate-fade-in"
-                    onClick={onClose}
-                >
-                    <div
-                        className="relative max-w-4xl w-full max-h-[95vh] bg-white rounded-xl shadow-2xl p-4 md:p-6 animate-zoom-in"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <button
-                            onClick={onClose}
-                            className="absolute -top-3 -right-3 md:top-3 md:right-3 bg-red-600 text-white rounded-full p-2 text-sm z-10 hover:bg-red-700 transition shadow-lg ring-4 ring-white"
-                            aria-label="Tutup gambar"
-                        >
-                            <Icons.X />
-                        </button>
-
-                        <img
-                            src={validImageUrl}
-                            alt={altText || "Gambar Diperbesar"}
-                            className="max-w-full max-h-[85vh] w-full object-contain rounded-lg"
-                            onError={() => {setValidImageUrl('https://placehold.co/800x600/6b7280/ffffff?text=Gambar+Gagal+Dimuat');}}
-                        />
-                        <p className="text-center text-xs md:text-sm text-stone-500 mt-3">{altText || "Gambar Produk"}</p>
+        <!-- PRODUCT SECTION -->
+        <section class="products" id="products">
+            <h2>Pilihan Favorit</h2>
+            <p>Menu terlaris yang wajib kamu cobain hari ini!</p>
+            
+            <div class="product-grid">
+                <!-- Produk 1 -->
+                <div class="product-card">
+                    <div class="product-img">🍫</div>
+                    <h3 class="product-title">Classic Fudgy Brownies</h3>
+                    <p class="product-desc">Brownies cokelat padat dengan tekstur fudgy dan topping choco chips melimpah.</p>
+                    <div class="product-footer">
+                        <span class="price">Rp 65.000</span>
+                        <button class="add-to-cart" aria-label="Tambah ke keranjang"><i data-lucide="plus" size="20"></i></button>
                     </div>
                 </div>
-            );
+
+                <!-- Produk 2 -->
+                <div class="product-card">
+                    <div class="product-img">🍵</div>
+                    <h3 class="product-title">Matcha Almond Bite</h3>
+                    <p class="product-desc">Kue gigitan kecil dengan rasa matcha asli dan taburan kacang almond renyah.</p>
+                    <div class="product-footer">
+                        <span class="price">Rp 45.000</span>
+                        <button class="add-to-cart" aria-label="Tambah ke keranjang"><i data-lucide="plus" size="20"></i></button>
+                    </div>
+                </div>
+
+                <!-- Produk 3 -->
+                <div class="product-card">
+                    <div class="product-img">🍓</div>
+                    <h3 class="product-title">Strawberry Chewy Cookie</h3>
+                    <p class="product-desc">Cookies lembut yang kenyal dengan potongan buah stroberi kering yang segar.</p>
+                    <div class="product-footer">
+                        <span class="price">Rp 35.000</span>
+                        <button class="add-to-cart" aria-label="Tambah ke keranjang"><i data-lucide="plus" size="20"></i></button>
+                    </div>
+                </div>
+
+                <!-- Produk 4 -->
+                <div class="product-card">
+                    <div class="product-img">🥐</div>
+                    <h3 class="product-title">Kue Sus Vla Vanilla</h3>
+                    <p class="product-desc">Camilan klasik sus lembut dengan isian vla vanilla yang manis dan lumer di mulut.</p>
+                    <div class="product-footer">
+                        <span class="price">Rp 40.000</span>
+                        <button class="add-to-cart" aria-label="Tambah ke keranjang"><i data-lucide="plus" size="20"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REVIEWS SECTION -->
+        <section class="reviews" id="reviews">
+            <h2>Ulasan Pelanggan</h2>
+            <p>Apa kata mereka tentang Kitchen Food?</p>
+            
+            <div class="reviews-container">
+                <div class="review-list" id="review-list">
+                    <!-- Ulasan akan dimuat dari JavaScript -->
+                </div>
+                <div class="review-form-container">
+                    <h3>Bagikan Pengalamanmu!</h3>
+                    <form id="review-form">
+                        <input type="text" id="rev-name" placeholder="Nama Anda" required>
+                        <select id="rev-rating" required>
+                            <option value="5" selected>⭐⭐⭐⭐⭐ (5 Bintang)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 Bintang)</option>
+                            <option value="3">⭐⭐⭐ (3 Bintang)</option>
+                            <option value="2">⭐⭐ (2 Bintang)</option>
+                            <option value="1">⭐ (1 Bintang)</option>
+                        </select>
+                        <textarea id="rev-text" rows="4" placeholder="Tuliskan pendapat atau masukan manismu di sini..." required></textarea>
+                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Kirim Ulasan</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER SECTION -->
+    <style>
+        /* =========================================
+           FOOTER
+           ========================================= */
+        .site-footer {
+            background-color: var(--white);
+            padding: 4rem 5% 2rem;
+            margin-top: 4rem;
+            border-top: 2px dashed var(--pink);
+            position: relative;
         }
 
-        // --- 3.2. Product Card (Memoized) ---
-        const ProductCard = memo(function ProductCardComponent({ product, handleAddToCart, handleViewImage }) {
-            const [imageUrl, setImageUrl] = useState(product.image);
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
 
-            // Fallback image handler
-            const handleImageError = () => {
-                setImageUrl(`https://placehold.co/600x400/D4AF98/4A2C2A?text=${product.name.split(' ').join('+')}`);
-            };
+        .footer-brand .logo {
+            margin-bottom: 1rem;
+        }
 
-            return (
-                <div
-                    className={`card-bg rounded-xl overflow-hidden shadow-lg hover:shadow-2xl duration-300 transform hover:-translate-y-1 border`}
-                >
-                    <img
-                        src={imageUrl}
-                        alt={product.name}
-                        className="w-full h-48 object-cover object-center cursor-pointer transition duration-300 hover:scale-[1.05]"
-                        onError={handleImageError}
-                        onClick={() => handleViewImage(imageUrl, product.name)}
-                    />
-                    <div className="p-6">
-                        <h3 className="serif-font text-2xl font-bold mb-2 text-4A2C2A">{product.name}</h3>
-                        <p className="text-xl font-extrabold text-primary-accent mb-4">
-                            {formatRupiah(product.price)}
-                        </p>
-                        <p className="text-gray-600 text-sm mb-6 line-clamp-3 h-[4.5em]">{product.desc}</p>
+        .footer-brand p {
+            color: var(--brown-light);
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
 
-                        <button
-                            onClick={() => handleAddToCart(product.id)}
-                            className="w-full py-3 rounded-xl font-bold btn-accent shadow-md transition hover:ring-2 ring-primary-accent"
-                        >
-                            Tambah ke Keranjang
-                        </button>
-                    </div>
+        .footer-col h4 {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--brown);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50%;
+            height: 3px;
+            background-color: var(--mint);
+            border-radius: 2px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--brown-light);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: var(--brown);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--bg-light);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--brown);
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: var(--pink);
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-light);
+            color: var(--brown-light);
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom span {
+            color: var(--pink);
+            font-weight: bold;
+        }
+
+        /* Responsive Footer */
+        @media (max-width: 768px) {
+            .site-footer {
+                padding: 3rem 5% 1.5rem;
+            }
+            .footer-content {
+                gap: 2rem;
+            }
+        }
+    </style>
+
+    <footer class="site-footer" id="footer">
+        <div class="footer-content">
+            <div class="footer-col footer-brand">
+                <div class="logo">
+                    <i data-lucide="cookie" color="#5C3D2E"></i> KitchenFood.Putri
                 </div>
-            );
+                <p>Menghadirkan kebahagiaan lewat setiap gigitan. Dibuat dengan bahan premium dan penuh cinta setiap harinya.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Bantuan</h4>
+                <div class="footer-links">
+                    <a href="#" onclick="openInfoModal('cara-pesan'); return false;"><i data-lucide="chevron-right" size="16"></i> Cara Memesan</a>
+                    <a href="#" onclick="openInfoModal('area-kirim'); return false;"><i data-lucide="chevron-right" size="16"></i> Area Pengiriman</a>
+                    <a href="#" onclick="openInfoModal('faq'); return false;"><i data-lucide="chevron-right" size="16"></i> FAQ</a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Hubungi Kami</h4>
+                <div class="footer-links">
+                    <a href="https://maps.app.goo.gl/7cc6ER3jERSTWC9Z9" target="_blank" rel="noopener noreferrer"><i data-lucide="map-pin" size="16"></i> Pasuruan</a>
+                    <a href="https://wa.me/6285649681417" target="_blank" rel="noopener noreferrer"><i data-lucide="phone" size="16"></i> +6285649681417</a>
+                    <a href="https://www.instagram.com/kitchenfood.putri/" target="_blank" rel="noopener noreferrer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                         kitchenfood.putri
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Kitchen Food by Putri</p>
+        </div>
+    </footer>
+
+    <!-- CART SIDEBAR & OVERLAY -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <aside class="cart-sidebar" id="cart-sidebar">
+        <!-- Header Cart (Putih & Hitam) -->
+        <div class="cart-header">
+            <h3><i data-lucide="shopping-cart"></i> Keranjang Anda</h3>
+            <button class="close-cart" id="close-cart-btn" aria-label="Tutup"><i data-lucide="x" size="20"></i></button>
+        </div>
+
+        <!-- Body Cart (Abu-abu muda / Putih) -->
+        <div class="cart-body">
+            <!-- Isi cart akan di-generate otomatis oleh JavaScript -->
+        </div>
+
+        <!-- Footer Cart (Putih & Hitam) -->
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-price">Rp 0</span>
+            </div>
+            <button class="btn-checkout">
+                Checkout Sekarang <i data-lucide="arrow-right" size="20"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MODAL / POP-UP INFORMASI (BANTUAN) -->
+    <div class="modal-overlay" id="info-modal-overlay"></div>
+    <div class="modal-box" id="info-modal">
+        <div class="modal-header">
+            <h3 id="modal-title">Judul Modal</h3>
+            <button class="close-modal" id="close-modal-btn" aria-label="Tutup Popup"><i data-lucide="x" size="20"></i></button>
+        </div>
+        <div class="modal-content" id="modal-content">
+            <!-- Konten akan di-generate via JavaScript -->
+        </div>
+    </div>
+
+    <!-- IMAGE LIGHTBOX MODAL -->
+    <div class="lightbox-overlay" id="image-lightbox">
+        <button class="close-lightbox" id="close-lightbox-btn" aria-label="Tutup Gambar"><i data-lucide="x" size="24"></i></button>
+        <img src="" alt="Gambar Diperbesar" class="lightbox-img" id="lightbox-img-element">
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Inisialisasi ikon dari library Lucide
+        lucide.createIcons();
+
+        // ----------------------------------------------------
+        // UI & INTERAKSI DASAR (SIDEBAR KERANJANG)
+        // ----------------------------------------------------
+        const cartBtn = document.getElementById('open-cart-btn');
+        const closeCartBtn = document.getElementById('close-cart-btn');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const header = document.querySelector('header');
+
+        // Event listener untuk efek transparan pada header saat di-scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
         });
 
+        function openCart() {
+            cartSidebar.classList.add('open');
+            cartOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+        }
 
-        // ===================================================================
-        // 4. FIREBASE COMPONENTS (TESTIMONIALS)
-        // ===================================================================
+        function closeCart() {
+            cartSidebar.classList.remove('open');
+            cartOverlay.classList.remove('active');
+            document.body.style.overflow = ''; 
+        }
 
-        // --- 4.1. Testimonial Card ---
-        const RatingStars = ({ rating }) => {
-            const stars = [];
-            for (let i = 1; i <= 5; i++) {
-                const isFilled = i <= rating;
-                stars.push(
-                    <Icons.Star
-                        key={i}
-                        fill={isFilled}
-                        className={isFilled ? 'text-amber-500' : 'text-gray-300'}
-                    />
-                );
-            }
-            return <div className="flex">{stars}</div>;
+        cartBtn.addEventListener('click', openCart);
+        closeCartBtn.addEventListener('click', closeCart);
+        cartOverlay.addEventListener('click', closeCart);
+
+        // ----------------------------------------------------
+        // SISTEM TOAST (NOTIFIKASI PESAN BOX)
+        // ----------------------------------------------------
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+        let toastTimeout;
+
+        function showToast(message) {
+            toast.innerText = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ----------------------------------------------------
+        // LOGIKA KERANJANG BELANJA (CART)
+        // ----------------------------------------------------
+        let cart = []; // Array untuk menyimpan data produk
+
+        const cartBody = document.querySelector('.cart-body');
+        const cartTotalPrice = document.getElementById('cart-total-price');
+        const cartBadge = document.querySelector('.cart-badge');
+
+        // Fungsi format angka ke Rupiah
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
         };
 
-        function TestimonialCard({ testimonial, handleViewImage }) {
-            const [imageUrl, setImageUrl] = useState(testimonial.imageUrl);
+        // Fungsi render (menampilkan data keranjang ke HTML)
+        function renderCart() {
+            cartBody.innerHTML = '';
+            let total = 0;
+            let totalItems = 0;
 
-            // Fallback image handler
-            const handleImageError = () => {
-                setImageUrl(TESTI_FALLBACK_IMAGE);
-            };
+            if (cart.length === 0) {
+                cartBody.innerHTML = '<div style="text-align:center; padding: 3rem 1rem; color: var(--brown-light);">Keranjang masih kosong nih. Yuk pilih menu manis favoritmu!</div>';
+            }
 
-            return (
-                <div className="card-bg p-6 rounded-xl shadow-md border flex flex-col justify-between h-full">
-                    <div>
-                        <RatingStars rating={testimonial.rating} />
-                        <p className="text-4A2C2A italic mt-3 mb-4 text-base line-clamp-5">
-                            "{testimonial.comment}"
-                        </p>
-                    </div>
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                totalItems += item.qty;
 
-                    <div className="flex items-end justify-between border-t border-EAD7D7 pt-4">
-                        <div className="flex flex-col">
-                            <p className="font-bold text-lg text-primary-accent">{testimonial.name}</p>
-                            <p className="text-xs text-muted">
-                                {formatTimestamp(testimonial.createdAt)}
-                            </p>
-                            <p className="text-xs text-muted truncate max-w-full">
-                                ID: {testimonial.userId?.substring(0, 8)}...
-                            </p>
-                        </div>
-                        {testimonial.imageUrl && (
-                            <div className="relative">
-                                <img
-                                    src={imageUrl}
-                                    alt={`Foto dari ${testimonial.name}`}
-                                    className="w-16 h-16 object-cover rounded-lg border-2 border-primary-accent cursor-pointer transition hover:opacity-80"
-                                    onError={handleImageError}
-                                    onClick={() => handleViewImage(testimonial.imageUrl, `Testimoni dari ${testimonial.name}`)}
-                                />
-                                <button
-                                    onClick={() => handleViewImage(testimonial.imageUrl, `Testimoni dari ${testimonial.name}`)}
-                                    className="absolute inset-0 flex items-center justify-center text-white bg-black/40 rounded-lg opacity-0 hover:opacity-100 transition duration-300"
-                                    aria-label="Lihat Foto Testimoni"
-                                >
-                                    <Icons.Image />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        }
+                const itemEl = document.createElement('div');
+                itemEl.className = 'cart-item';
+                
+                // Menentukan background emoji secara berselang-seling
+                const bgColors = ['var(--pink)', 'var(--mint)', '#FFE5B4', '#E6E6FA'];
+                const bgColor = bgColors[index % bgColors.length];
 
-        // --- 4.2. Testimonial Form ---
-        function TestimonialForm({ db, userId }) {
-            const [name, setName] = useState('');
-            const [comment, setComment] = useState('');
-            const [imageUrl, setImageUrl] = useState('');
-            const [rating, setRating] = useState(5);
-            const [isSubmitting, setIsSubmitting] = useState(false);
-            const [message, setMessage] = useState('');
-
-            const handleSubmit = async (e) => {
-                e.preventDefault();
-                if (!db || !name || !comment) {
-                    setMessage("Nama dan Testimoni wajib diisi.");
-                    return;
-                }
-
-                setIsSubmitting(true);
-                setMessage('');
-
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                const collectionPath = `artifacts/${appId}/public/data/testimonials`;
-
-                try {
-                    await window.firebase.addDoc(window.firebase.collection(db, collectionPath), {
-                        name: name.trim(),
-                        comment: comment.trim(),
-                        rating: rating,
-                        imageUrl: imageUrl.trim() || null,
-                        createdAt: window.firebase.serverTimestamp(),
-                        userId: userId
-                    });
-
-                    // Reset form
-                    setName(''); setComment(''); setImageUrl(''); setRating(5);
-                    setMessage('Terima kasih! Testimoni Anda berhasil dikirim.');
-                } catch (error) {
-                    console.error("Error writing document: ", error);
-                    setMessage('Gagal mengirim testimoni. Silakan coba lagi.');
-                } finally {
-                    setIsSubmitting(false);
-                    setTimeout(() => setMessage(''), 5000);
-                }
-            };
-
-            const renderStars = (currentRating) => {
-                const stars = [];
-                for (let i = 1; i <= 5; i++) {
-                    stars.push(
-                        <button
-                            key={i}
-                            type="button"
-                            onClick={() => setRating(i)}
-                            className={`p-1 transition-colors ${i <= currentRating ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400'}`}
-                        >
-                            <Icons.Star fill={true} />
-                        </button>
-                    );
-                }
-                return stars;
-            };
-
-            return (
-                <div className="mt-8 p-6 card-bg rounded-xl shadow-lg border">
-                    <h3 className="text-xl font-bold mb-4 text-primary-accent">Tulis Testimoni Anda</h3>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Input Rating */}
-                        <div>
-                            <label className="block text-sm font-medium text-4A2C2A mb-1">Rating:</label>
-                            <div className="flex space-x-1">{renderStars(rating)}</div>
-                        </div>
-
-                        {/* Input Nama */}
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-4A2C2A mb-1">Nama Anda:</label>
-                            <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required disabled={isSubmitting} className="w-full p-3 border rounded-lg transition form-input-field"/>
-                        </div>
-                        {/* URL Foto */}
-                        <div>
-                            <label htmlFor="imageUrl" className="block text-sm font-medium text-4A2C2A mb-1 flex items-center gap-1"><Icons.Image /> Foto Brownies (URL opsional):</label>
-                            <input id="imageUrl" type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste link foto di sini" disabled={isSubmitting} className="w-full p-3 border rounded-lg transition form-input-field"/>
-                            <p className="text-xs text-muted mt-1">Hanya mendukung link langsung ke gambar (.jpg, .png, dll.)</p>
-                        </div>
-                        {/* Comment */}
-                        <div>
-                            <label htmlFor="comment" className="block text-sm font-medium text-4A2C2A mb-1">Testimoni Anda:</label>
-                            <textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)} rows="3" required disabled={isSubmitting} className="w-full p-3 border rounded-lg transition form-input-field"></textarea>
-                        </div>
-
-                        {/* Submit Button */}
-                        <button type="submit" disabled={isSubmitting} className={`w-full py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 ${isSubmitting ? 'bg-gray-400 cursor-not-allowed text-white' : 'btn-accent shadow-lg'}`}>
-                            {isSubmitting ? (<><Icons.Loading /> Mengirim...</>) : ('Kirim Testimoni')}
-                        </button>
-                    </form>
-                    {message && (<div className={`mt-3 p-3 rounded-lg text-sm ${message.includes('Gagal') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>{message}</div>)}
-                </div>
-            );
-        }
-
-        // ===================================================================
-        // 5. LAYOUT COMPONENTS
-        // ===================================================================
-
-        // --- 5.1. Navigation Header ---
-        function Header({ isMenuOpen, setIsMenuOpen, isCartOpen, setIsCartOpen, cart }) {
-            return (
-                <header id="top" className="fixed top-0 left-0 w-full z-50 glass-nav shadow-md">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-                        
-                        {/* 1. LEFT: Logo */}
-                        <div className="flex-1 flex justify-start">
-                            <a href="#top" className="text-2xl font-bold serif-font text-primary-accent hover:text-pink-600 transition">Kitchen Food</a>
-                        </div>
-
-                        {/* 2. MIDDLE: Desktop Nav */}
-                        <nav className="hidden md:flex space-x-8">
-                            <a href="#produk" onClick={() => setIsMenuOpen(false)} className="text-4A2C2A font-medium hover:text-primary-accent transition">Produk</a>
-                            <a href="#testimoni" onClick={() => setIsMenuOpen(false)} className="text-4A2C2A font-medium hover:text-primary-accent transition">Testimoni</a>
-                            <a href="#kontak" onClick={() => setIsMenuOpen(false)} className="text-4A2C2A font-medium hover:text-primary-accent transition">Kontak</a>
-                        </nav>
-
-                        {/* 3. RIGHT: Buttons */}
-                        <div className="flex-1 flex items-center justify-end space-x-3">
-                            <button onClick={() => setIsCartOpen(true)} className="relative p-2 rounded-full btn-primary shadow-sm hover:ring-2 ring-primary-accent transition" aria-label="Keranjang Belanja">
-                                <Icons.Cart />
-                                {Object.keys(cart).length > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full">
-                                        {Object.values(cart).reduce((sum, qty) => sum + qty, 0)}
-                                    </span>
-                                )}
-                            </button>
-
-                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-full btn-primary md:hidden shadow-sm hover:ring-2 ring-primary-accent transition" aria-label="Toggle Menu">
-                                {isMenuOpen ? <Icons.X /> : <Icons.Menu />}
-                            </button>
+                itemEl.innerHTML = `
+                    <div class="cart-item-emoji" style="background: ${bgColor}">${item.emoji}</div>
+                    <div class="cart-item-info">
+                        <h4>${item.title}</h4>
+                        <div class="cart-item-price">${formatRupiah(item.price)}</div>
+                        <div class="cart-item-qty">
+                            <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
                         </div>
                     </div>
+                    <button class="remove-item" onclick="removeItem(${index})"><i data-lucide="trash-2" size="18"></i></button>
+                `;
+                cartBody.appendChild(itemEl);
+            });
 
-                    {/* Mobile Menu */}
-                    {isMenuOpen && (
-                        <div className="md:hidden pb-4 pt-2 border-t border-4A2C2A/10 bg-F8F4E1">
-                            <nav className="flex flex-col space-y-2 px-4">
-                                <a href="#produk" onClick={() => setIsMenuOpen(false)} className="py-2 text-4A2C2A font-medium hover:text-primary-accent transition">Produk</a>
-                                <a href="#testimoni" onClick={() => setIsMenuOpen(false)} className="py-2 text-4A2C2A font-medium hover:text-primary-accent transition">Testimoni</a>
-                                <a href="#kontak" onClick={() => setIsMenuOpen(false)} className="py-2 text-4A2C2A font-medium hover:text-primary-accent transition">Kontak</a>
-                            </nav>
-                        </div>
-                    )}
-                </header>
-            );
-        }
-
-        // --- 5.2. Hero Section ---
-        function Hero() {
-            return (
-                <section className="bg-brownies pt-24 pb-16 md:pt-32 md:pb-24 text-center">
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold serif-font leading-tight mb-4">
-                            Lezatnya <span className="text-primary-accent drop-shadow-md">Fudgy Brownies</span> Otentik
-                        </h1>
-                        <p className="text-lg md:text-xl mb-8 text-4A2C2A max-w-2xl mx-auto">
-                            Dibuat dengan cinta dan bahan baku premium, menghadirkan rasa cokelat yang lumer di setiap gigitan.
-                        </p>
-                        <a href="#produk" className="inline-flex items-center justify-center px-8 py-3 text-lg font-semibold rounded-full btn-primary shadow-xl transition transform hover:scale-[1.03] hover:shadow-2xl ring-2 ring-primary-accent">
-                            Lihat Semua Produk
-                            <Icons.ChevronRight />
-                        </a>
-                    </div>
-                </section>
-            );
-        }
-
-        // --- 5.3. Products Section ---
-        function ProductsSection({ handleAddToCart, handleViewImage }) {
-            return (
-                <section id="produk" className="py-16 md:py-24 bg-white">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-4xl md:text-5xl font-bold serif-font text-center mb-4 text-primary-accent">Pilihan Brownies Kami</h2>
-                        <p className="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Jelajahi berbagai varian rasa spesial yang kami siapkan. Setiap gigitan adalah kebahagiaan.</p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {products.map(product => (
-                                <ProductCard
-                                    key={product.id}
-                                    product={product}
-                                    handleAddToCart={handleAddToCart}
-                                    handleViewImage={handleViewImage}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            );
-        }
-
-        // --- 5.4. Testimonials Section ---
-        function TestimonialsSection({ testimonials, loadingTesti, db, userId, handleViewImage }) {
-            return (
-                <section id="testimoni" className="bg-F8F4E1 py-16 md:py-24">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-4xl md:text-5xl font-bold serif-font text-center mb-4 text-primary-accent">Apa Kata Pelanggan Kami?</h2>
-                        <p className="text-center text-lg text-muted mb-12 max-w-3xl mx-auto">Bukti kelezatan dan kualitas produk Kitchen Food by Putri langsung dari pelanggan setia.</p>
-
-                        {/* Testimonials List */}
-                        {loadingTesti && (
-                            <div className="flex justify-center items-center py-10">
-                                <Icons.Loading />
-                                <p className="ml-3 text-muted">Memuat testimoni...</p>
-                            </div>
-                        )}
-
-                        {!loadingTesti && testimonials.length === 0 && (
-                            <p className="text-center text-muted py-10">Belum ada testimoni. Jadilah yang pertama!</p>
-                        )}
-
-                        {!loadingTesti && testimonials.length > 0 && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {testimonials.map(t => (
-                                    <TestimonialCard key={t.id} testimonial={t} handleViewImage={handleViewImage} />
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Testimonial Form */}
-                        <TestimonialForm db={db} userId={userId} />
-                    </div>
-                </section>
-            );
-        }
-
-        // --- 5.5. Contact and Footer ---
-        function ContactFooter({ userId }) {
-            return (
-                <footer id="kontak" className="footer-bg pt-12 pb-8">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-white/20 pb-8 mb-8">
-                            <div>
-                                <h3 className="text-xl font-bold serif-font text-secondary-accent mb-4">Kitchen Food</h3>
-                                <p className="text-sm text-F8F4E1/80">Menyediakan fudgy brownies terbaik, dibuat setiap hari dengan bahan-bahan pilihan.</p>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xl font-bold serif-font text-secondary-accent mb-4">Link Cepat</h3>
-                                <ul className="space-y-2 text-sm">
-                                    <li><a href="#produk" className="hover:text-secondary-accent transition">Produk</a></li>
-                                    <li><a href="#testimoni" className="hover:text-secondary-accent transition">Testimoni</a></li>
-                                </ul>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xl font-bold serif-font text-secondary-accent mb-4">Hubungi Kami</h3>
-                                <ul className="space-y-2 text-sm">
-                                    <li className="flex items-center gap-2"><Icons.Phone /> <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="hover:text-secondary-accent transition">WhatsApp: +62 {WHATSAPP_NUMBER}</a></li>
-                                    <li className="flex items-center gap-2"><Icons.Instagram /> <a href="https://instagram.com/kitchenfood_putri" target="_blank" rel="noopener noreferrer" className="hover:text-secondary-accent transition">Instagram: @kitchenfood_putri</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div className="text-center text-sm text-F8F4E1/60">
-                            &copy; {new Date().getFullYear()} Kitchen Food by Putri. | User ID Anda: {userId || 'Authenticating...'}
-                        </div>
-                    </div>
-                </footer>
-            );
-        }
-
-        // --- 5.6. Cart Side Panel (VERSI TERBARU: HEADER & FOOTER PUTIH/HITAM) ---
-        function CartSidePanel({ isCartOpen, setIsCartOpen, cartItems, cartTotal, handleUpdateCart, handleClearCart, generateWhatsappMessage }) {
-
-            // Biaya pengiriman tiruan
-            const subtotal = cartTotal;
-            const shippingCost = 25000;
-            const total = subtotal + shippingCost;
+            // Update Total Harga & Badge Angka
+            cartTotalPrice.innerText = formatRupiah(total);
+            cartBadge.innerText = totalItems;
             
-            return (
-                <div
-                    // Full screen overlay dan animasi fade
-                    className={`fixed inset-0 z-50 transition-opacity duration-300 ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 hidden'}`}
-                    onClick={() => setIsCartOpen(false)} // Tutup saat klik di luar
-                >
-                    <div className="absolute inset-0 bg-black/50"></div>
+            // Sembunyikan badge jika 0
+            if(totalItems > 0) {
+                cartBadge.style.display = 'flex';
+            } else {
+                cartBadge.style.display = 'none';
+            }
 
-                    <div
-                        // Panel utama, meluncur dari kanan
-                        className={`fixed right-0 top-0 h-full w-full max-w-md shadow-2xl transition-transform duration-300 transform ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Kontainer Panel: Menggunakan bg-gray-50 untuk sedikit tekstur dan text-black */}
-                        <div className="flex flex-col h-full bg-gray-50 shadow-xl text-black">
-
-                            {/* 1. CART HEADER - PUTIH & HITAM */}
-                            <header className="p-4 sm:p-6 sticky top-0 bg-white shadow-md z-10 text-black border-b border-gray-100">
-                                <div className="flex items-center justify-between">
-                                    <h2 className="text-xl sm:text-2xl font-bold flex items-center serif-font">
-                                        <Icons.Cart className="mr-2 h-6 w-6" />
-                                        Keranjang Belanja
-                                        <span className="ml-2 text-sm font-semibold text-gray-500">
-                                            ({cartItems.length})
-                                        </span>
-                                    </h2>
-                                    <button
-                                        type="button"
-                                        className="p-1 rounded-full text-black hover:text-red-600 transition-colors"
-                                        onClick={() => setIsCartOpen(false)}
-                                        aria-label="Tutup Keranjang"
-                                    >
-                                        <Icons.X className="h-6 w-6" />
-                                    </button>
-                                </div>
-                                <p className="mt-1 text-sm text-gray-600">
-                                    Lanjut ke pembayaran sebelum kehabisan!
-                                </p>
-                            </header>
-
-                            {/* 2. ITEM LIST (Scrollable) - Latar belakang F8F4E1 (Cream) */}
-                            <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 space-y-4 bg-F8F4E1 text-black">
-                                {cartItems.length === 0 ? (
-                                    <div className="text-center py-10 text-gray-600 bg-white p-6 rounded-xl shadow-inner border border-dashed border-primary-accent/30">
-                                        <Icons.CheckCircle className="mx-auto h-12 w-12 text-green-500" />
-                                        <p className="mt-4 text-lg font-medium">Keranjang Anda kosong.</p>
-                                        <p className="mt-1 text-sm">Mari mulai berbelanja!</p>
-                                        <a onClick={() => setIsCartOpen(false)} href="#produk" className="mt-4 inline-flex items-center text-sm font-medium text-primary-accent hover:text-pink-600 transition">
-                                            Lihat Produk Sekarang <Icons.ChevronRight className="h-4 w-4 ml-1" />
-                                        </a>
-                                    </div>
-                                ) : (
-                                    cartItems.map(item => (
-                                        <div key={item.id} className="flex py-3 px-2 bg-white rounded-lg shadow-sm border border-gray-100">
-                                            <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border">
-                                                <img
-                                                    src={item.image}
-                                                    alt={item.name}
-                                                    className="w-full h-full object-cover object-center"
-                                                    onError={(e) => { e.target.onerror = null; e.target.src=`https://placehold.co/50x50/D4AF98/4A2C2A?text=${item.name.charAt(0)}` }}
-                                                />
-                                            </div>
-
-                                            <div className="ml-4 flex-1 flex flex-col justify-between">
-                                                <div className="flex justify-between">
-                                                    <div>
-                                                        <h3 className="text-base font-semibold text-black line-clamp-1">
-                                                            {item.name}
-                                                        </h3>
-                                                        <p className="mt-0.5 text-sm text-gray-500">{formatRupiah(item.price)}</p>
-                                                    </div>
-                                                    <p className="ml-4 text-base font-medium text-primary-accent">
-                                                        {formatRupiah(item.subtotal)}
-                                                    </p>
-                                                </div>
-
-                                                <div className="flex items-center justify-between text-sm mt-1">
-                                                    {/* Kontrol Kuantitas */}
-                                                    <div className="flex items-center space-x-2 border border-gray-200 rounded-full">
-                                                        <button
-                                                            onClick={() => handleUpdateCart(item.id, item.quantity - 1)}
-                                                            className="p-1 rounded-full text-black hover:bg-gray-100 transition-colors"
-                                                            aria-label="Kurangi kuantitas"
-                                                        >
-                                                            <Icons.Minus />
-                                                        </button>
-                                                        <span className="text-black font-medium w-6 text-center">{item.quantity}</span>
-                                                        <button
-                                                            onClick={() => handleUpdateCart(item.id, item.quantity + 1)}
-                                                            className="p-1 rounded-full text-black hover:bg-gray-100 transition-colors"
-                                                            aria-label="Tambah kuantitas"
-                                                        >
-                                                            <Icons.Plus />
-                                                        </button>
-                                                    </div>
-
-                                                    {/* Tombol Hapus */}
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleUpdateCart(item.id, 0)} // Set quantity to 0 to remove
-                                                        className="font-medium text-red-500 hover:text-red-700 flex items-center transition-colors"
-                                                        aria-label="Hapus item"
-                                                    >
-                                                        <Icons.Trash2 className="h-4 w-4 mr-1" />
-                                                        Hapus
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-
-                            {/* 3. CHECKOUT FOOTER - PUTIH & HITAM */}
-                            <footer className="border-t border-gray-200 p-4 sm:p-6 sticky bottom-0 bg-white text-black shadow-inner">
-                                {/* Ringkasan Harga */}
-                                <div className="space-y-2 text-base font-medium">
-                                    <div className="flex justify-between">
-                                        <p className="text-gray-700">Subtotal:</p>
-                                        <p className="font-semibold text-black">{formatRupiah(subtotal)}</p>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <p className="text-gray-700">Biaya Pengiriman (Estimasi):</p>
-                                        <p className="font-semibold text-black">{formatRupiah(shippingCost)}</p>
-                                    </div>
-                                </div>
-                                
-                                <div className="mt-4 flex justify-between pt-4 border-t border-gray-200">
-                                    <p className="text-lg font-bold">Total (Perkiraan):</p>
-                                    <p className="text-xl font-bold text-primary-accent">{formatRupiah(total)}</p>
-                                </div>
-
-                                {/* Tombol Checkout WhatsApp */}
-                                <div className="mt-6">
-                                    <a
-                                        href={generateWhatsappMessage()}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={`w-full flex items-center justify-center rounded-xl border border-transparent bg-green-500 px-6 py-3 text-base font-medium text-white shadow-lg hover:bg-green-600 transition-colors ${cartItems.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        onClick={cartItems.length === 0 ? (e) => e.preventDefault() : undefined}
-                                        disabled={cartItems.length === 0}
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 12.83 12.83 0 0 1-2.73 3.66 12.82 12.82 0 0 1-3.66 2.73 8.38 8.38 0 0 1-3.8.9c-1.55 0-3-.3-4.36-.9s-2.61-1.42-3.66-2.73A12.83 12.83 0 0 1 2.3 15.3 8.38 8.38 0 0 1 1 11.5C1 6.25 5.25 2 10.5 2h3C18.75 2 23 6.25 23 11.5v3c0 .5-.4 1-1 1h-1.5c-.6 0-1-.4-1-1v-3.5c0-4.14-3.36-7.5-7.5-7.5h-3c-4.14 0-7.5 3.36-7.5 7.5S6.36 19 10.5 19H12c.5 0 1 .4 1 1s-.5 1-1 1H9c-.5 0-1 .4-1 1s.5 1 1 1h3c4.14 0 7.5-3.36 7.5-7.5v-3c0-.5-.4-1-1-1h-1.5c-.6 0-1-.4-1-1z"/></svg>
-                                        {cartItems.length > 0 ? 'Lanjut ke WhatsApp' : 'Keranjang Kosong'}
-                                    </a>
-                                </div>
-
-                                <div className="mt-4 flex justify-center text-center text-sm text-gray-500">
-                                    <button
-                                        type="button"
-                                        onClick={handleClearCart}
-                                        className="font-medium text-red-500 hover:text-red-700 transition-colors disabled:text-gray-400"
-                                        disabled={cartItems.length === 0}
-                                    >
-                                        Kosongkan Seluruh Keranjang
-                                    </button>
-                                </div>
-                            </footer>
-                        </div>
-                    </div>
-                </div>
-            );
+            // Render ulang ikon Lucide untuk elemen yang baru dibuat di keranjang
+            lucide.createIcons();
         }
 
+        // Fungsi Tambah/Kurangi Qty (+ / -)
+        window.updateQty = (index, change) => {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1); // Hapus item jika qty mencapai 0
+            }
+            renderCart();
+        };
 
-        // ===================================================================
-        // 6. MAIN APPLICATION (APP)
-        // ===================================================================
+        // Fungsi Hapus Item dari Keranjang (Ikon Trash)
+        window.removeItem = (index) => {
+            cart.splice(index, 1);
+            renderCart();
+            showToast("Item dihapus dari keranjang 🗑️");
+        };
 
-        function App() {
-            // UI State
-            const [isMenuOpen, setIsMenuOpen] = useState(false);
-            const [cart, setCart] = useState({}); // {productId: quantity}
-            const [isCartOpen, setIsCartOpen] = useState(false);
-            const [selectedImage, setSelectedImage] = useState(null);
-            const [imageAltText, setImageAltText] = useState('');
+        // Event Listener: Klik "Tambah ke Keranjang" (+) di daftar produk
+        document.querySelectorAll('.add-to-cart').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                // Cari elemen card terdekat untuk mengambil data
+                const card = e.target.closest('.product-card');
+                const title = card.querySelector('.product-title').innerText;
+                const priceText = card.querySelector('.price').innerText;
+                
+                // Bersihkan teks "Rp" dan titik, ubah ke angka murni
+                const price = parseInt(priceText.replace(/[^0-9]/g, ''));
+                const emoji = card.querySelector('.product-img').innerText;
 
-            // Firebase State
-            const [db, setDb] = useState(null);
-            const [userId, setUserId] = useState(null);
-            const [testimonials, setTestimonials] = useState([]);
-            const [loadingTesti, setLoadingTesti] = useState(true);
-
-            // --- Handlers (Memoized) ---
-            const handleViewImage = useCallback((url, alt) => {
-                setSelectedImage(url);
-                setImageAltText(alt);
-            }, []);
-
-            const handleAddToCart = useCallback((productId) => {
-                setCart(prevCart => ({
-                    ...prevCart,
-                    [productId]: (prevCart[productId] || 0) + 1
-                }));
-                setIsCartOpen(true); // Open cart immediately
-            }, []);
-
-            const handleUpdateCart = useCallback((productId, quantity) => {
-                setCart(prevCart => {
-                    const newCart = { ...prevCart };
-                    if (quantity <= 0) {
-                        delete newCart[productId];
-                    } else {
-                        newCart[productId] = quantity;
-                    }
-                    return newCart;
-                });
-            }, []);
-
-            const handleClearCart = useCallback(() => {
-                setCart({});
-                setIsCartOpen(false);
-            }, []);
-
-            // --- FIREBASE LOGIC (AUTH & FETCHING PUBLIC DATA) ---
-            useEffect(() => {
-                if (typeof window.firebase === 'undefined' || !window.firebase.initializeApp) return;
-
-                try {
-                    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-                    const app = window.firebase.initializeApp(firebaseConfig);
-                    const firestore = window.firebase.getFirestore(app);
-                    const authInstance = window.firebase.getAuth(app);
-
-                    setDb(firestore);
-                    if (window.firebase.setLogLevel) window.firebase.setLogLevel('debug');
-
-                    // 1. Initialize Auth
-                    const initializeAuth = async () => {
-                        try {
-                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                                await window.firebase.signInWithCustomToken(authInstance, __initial_auth_token);
-                            } else {
-                                await window.firebase.signInAnonymously(authInstance);
-                            }
-                        } catch (e) {
-                            console.error("Firebase Auth Error:", e);
-                        }
-                    };
-
-                    let unsubscribeSnapshot = () => {};
-
-                    // 2. Auth State Listener
-                    const unsubscribeAuth = window.firebase.onAuthStateChanged(authInstance, (user) => {
-                        unsubscribeSnapshot();
-                        setLoadingTesti(true);
-
-                        if (user) {
-                            setUserId(user.uid);
-
-                            // Fetch Testimonials ONLY after successful Auth
-                            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                            const collectionPath = `artifacts/${appId}/public/data/testimonials`;
-
-                            const q = window.firebase.query(
-                                window.firebase.collection(firestore, collectionPath)
-                            );
-
-                            unsubscribeSnapshot = window.firebase.onSnapshot(q, (snapshot) => {
-                                const loadedTestimonials = snapshot.docs.map(doc => ({
-                                    id: doc.id,
-                                    ...doc.data()
-                                }));
-
-                                const sortedTestimonials = loadedTestimonials.sort((a, b) => {
-                                    // Robust timestamp sorting (newest first)
-                                    const timeA = a.createdAt && typeof a.createdAt.toDate === 'function' ? a.createdAt.toDate().getTime() : 0;
-                                    const timeB = b.createdAt && typeof b.createdAt.toDate === 'function' ? b.createdAt.toDate().getTime() : 0;
-                                    return timeB - timeA;
-                                });
-
-                                setTestimonials(sortedTestimonials);
-                                setLoadingTesti(false);
-                            }, (error) => {
-                                console.error("Error fetching testimonials: ", error);
-                                setLoadingTesti(false);
-                            });
-
-                        } else {
-                            // User signed out or failed to sign in
-                            setUserId(null);
-                            setTestimonials([]);
-                            setLoadingTesti(false);
-                        }
-                    });
-
-                    initializeAuth();
-
-                    return () => {
-                        unsubscribeAuth();
-                        unsubscribeSnapshot();
-                    };
-
-                } catch (e) {
-                    console.error("Firebase Initialization Error:", e);
-                    setLoadingTesti(false);
+                // Cek apakah item sudah ada di keranjang
+                const existingItem = cart.find(item => item.title === title);
+                if (existingItem) {
+                    existingItem.qty += 1;
+                } else {
+                    cart.push({ title, price, emoji, qty: 1 });
                 }
-            }, []);
 
-            // --- Cart Logic (Memoized) ---
-            const cartItems = useMemo(() => {
-                return Object.keys(cart)
-                    .filter(productId => cart[productId] > 0)
-                    .map(productId => {
-                        const product = products.find(p => p.id === parseInt(productId));
-                        // Tambahkan subtotal untuk memudahkan rendering
-                        const quantity = cart[productId];
-                        return {
-                            ...product,
-                            quantity: quantity,
-                            subtotal: product.price * quantity
-                        };
-                    });
-            }, [cart]);
+                renderCart();
+                showToast(`Yeay! ${title} ditambahkan! 🍰`);
+            });
+        });
 
-            const cartTotal = useMemo(() => {
-                return cartItems.reduce((total, item) => total + item.subtotal, 0);
-            }, [cartItems]);
+        // Event Listener: Tombol Checkout (Terkoneksi WhatsApp)
+        document.querySelector('.btn-checkout').addEventListener('click', () => {
+            if (cart.length === 0) {
+                showToast("Oops, Keranjang Anda masih kosong!");
+                return;
+            }
 
-            const generateWhatsappMessage = () => {
-                const itemDetails = cartItems.map(item =>
-                    `* ${item.name} (${item.quantity} pcs) - ${formatRupiah(item.subtotal)}`
-                ).join('\n');
+            // Hitung total harga tagihan
+            let totalTagihan = 0;
+            cart.forEach(item => {
+                totalTagihan += item.price * item.qty;
+            });
 
-                // Menggunakan total termasuk biaya pengiriman mock untuk pesan WA
-                const subtotal_ = cartTotal;
-                const shippingCost = 25000;
-                const total_ = subtotal_ + shippingCost;
+            // Menyusun format pesan WhatsApp (Terkoneksi langsung ke WA Anda)
+            let waText = "Halo Admin KitchenFood.Putri, saya mau memesan:\n\n";
+            cart.forEach((item, index) => {
+                waText += `${index + 1}. ${item.title} (${item.qty}x) - ${formatRupiah(item.price * item.qty)}\n`;
+            });
+            waText += `\n*Total Tagihan: ${formatRupiah(totalTagihan)}*`;
+            waText += "\n\nMohon info ketersediaan dan total pembayarannya ya. Terima kasih! 🍰";
 
+            // Nomor tujuan WhatsApp Anda
+            const waNumber = "6285649681417";
+            const waUrl = `https://api.whatsapp.com/send?phone=${waNumber}&text=${encodeURIComponent(waText)}`;
+            
+            // Buka WhatsApp di tab baru
+            window.open(waUrl, '_blank');
 
-                const message = encodeURIComponent(
-                    `Halo Kitchen Food by Putri!\n\nSaya ingin memesan brownies dengan detail sebagai berikut:\n\n` +
-                    `--- Daftar Pesanan ---\n` +
-                    `${itemDetails}\n` +
-                    `*Subtotal:* ${formatRupiah(subtotal_)}\n` +
-                    `*Estimasi Ongkir:* ${formatRupiah(shippingCost)}\n` +
-                    `*Total Perkiraan:* ${formatRupiah(total_)}\n` +
-                    `----------------------\n\n` +
-                    `Mohon diproses, terima kasih!`
-                );
+            // Kosongkan keranjang setelah checkout berjalan
+            showToast("Mengarahkan ke WhatsApp... 🎉");
+            cart = []; 
+            renderCart(); 
+            closeCart(); 
+        });
 
-                return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
-            };
+        // ----------------------------------------------------
+        // LOGIKA ULASAN PELANGGAN (REVIEWS)
+        // ----------------------------------------------------
+        // Data ulasan awal (dummy data)
+        let reviewsData = [
+            { name: "Siska Saraswati", rating: 5, text: "Browniesnya beneran fudgy dan nyoklat banget! Anak-anak pada suka." },
+            { name: "Bima Arya", rating: 4, text: "Kue susnya mantap, vlanya lumer. Cuma pengirimannya agak telat dikit." },
+            { name: "Dina Amanda", rating: 5, text: "Sumpah ini cookies terenak yang pernah aku coba. Strawberrynya kerasa pas, gak kemanisan." }
+        ];
 
+        const reviewListEl = document.getElementById('review-list');
+        const reviewForm = document.getElementById('review-form');
 
-            return (
-                <div className="min-h-screen">
-                    {/* 1. Header and Navigation */}
-                    <Header
-                        isMenuOpen={isMenuOpen}
-                        setIsMenuOpen={setIsMenuOpen}
-                        isCartOpen={isCartOpen}
-                        setIsCartOpen={setIsCartOpen}
-                        cart={cart}
-                    />
-
-                    <main>
-                        {/* 2. Hero Section */}
-                        <Hero />
-
-                        {/* 3. Products Section */}
-                        <ProductsSection
-                            handleAddToCart={handleAddToCart}
-                            handleViewImage={handleViewImage}
-                        />
-
-                        {/* 4. Testimonials Section */}
-                        <TestimonialsSection
-                            testimonials={testimonials}
-                            loadingTesti={loadingTesti}
-                            db={db}
-                            userId={userId}
-                            handleViewImage={handleViewImage}
-                        />
-                    </main>
-
-                    {/* 5. Footer */}
-                    <ContactFooter userId={userId} />
-
-                    {/* 6. Cart Side Panel */}
-                    <CartSidePanel
-                        isCartOpen={isCartOpen}
-                        setIsCartOpen={setIsCartOpen}
-                        cartItems={cartItems}
-                        cartTotal={cartTotal}
-                        handleUpdateCart={handleUpdateCart}
-                        handleClearCart={handleClearCart}
-                        generateWhatsappMessage={generateWhatsappMessage}
-                    />
-
-                    {/* 7. Image Modal */}
-                    <ImageModal
-                        imageUrl={selectedImage}
-                        onClose={() => setSelectedImage(null)}
-                        altText={imageAltText}
-                    />
-                </div>
-            );
+        // Fungsi render ulasan ke HTML
+        function renderReviews() {
+            reviewListEl.innerHTML = '';
+            reviewsData.forEach(rev => {
+                const stars = '⭐'.repeat(rev.rating);
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'review-card';
+                reviewCard.innerHTML = `
+                    <div class="review-header">
+                        <span class="review-name">${rev.name}</span>
+                        <span class="review-stars">${stars}</span>
+                    </div>
+                    <p class="review-text">"${rev.text}"</p>
+                `;
+                reviewListEl.appendChild(reviewCard);
+            });
         }
 
-        // --- RENDER APPLICATION ---
-        const rootElement = document.getElementById('root');
-        if (rootElement) {
-            const root = ReactDOM.createRoot(rootElement);
-            root.render(<App />);
-        }
+        // Fungsi ketika form ulasan disubmit
+        reviewForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('rev-name').value;
+            const rating = parseInt(document.getElementById('rev-rating').value);
+            const text = document.getElementById('rev-text').value;
+
+            // Tambahkan ulasan baru di urutan teratas
+            reviewsData.unshift({ name, rating, text });
+            
+            renderReviews();
+            showToast("Terima kasih atas ulasan manismu! 💖");
+            
+            // Reset form
+            reviewForm.reset();
+        });
+
+        // ----------------------------------------------------
+        // LOGIKA MODAL POP-UP (BANTUAN/FOOTER)
+        // ----------------------------------------------------
+        const infoModalOverlay = document.getElementById('info-modal-overlay');
+        const infoModal = document.getElementById('info-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        // Database konten untuk masing-masing menu bantuan
+        const modalData = {
+            'cara-pesan': {
+                title: '🍰 Cara Memesan',
+                content: `
+                    <ol>
+                        <li>Pilih produk favoritmu di bagian <strong>Menu Spesial</strong>.</li>
+                        <li>Klik tombol tambah <strong>(+)</strong> pada produk yang ingin dibeli.</li>
+                        <li>Buka ikon keranjang belanja di pojok kanan atas untuk mengecek pesananmu.</li>
+                        <li>Pastikan jumlah pesanan sudah benar, lalu klik <strong>Checkout Sekarang</strong>.</li>
+                        <li>Kamu akan otomatis diarahkan ke chat WhatsApp Admin. Tinggal kirim pesannya, dan kami akan memandu proses pembayaran!</li>
+                    </ol>
+                    <p><em>Gampang banget kan? Yuk pesan sekarang!</em></p>
+                `
+            },
+            'area-kirim': {
+                title: '🛵 Area Pengiriman',
+                content: `
+                    <p>Saat ini KitchenFood Putri melayani pengiriman untuk wilayah:</p>
+                    <ul>
+                        <li>📍 <strong>Pasuruan Kota & Kabupaten</strong></li>
+                        <li>📍 <strong>Area Sekitarnya (Sesuai kesepakatan)</strong></li>
+                    </ul>
+                    <br>
+                    <p><strong>Metode Pengiriman:</strong></p>
+                    <ol>
+                        <li><strong>Pick-up / Ambil Sendiri:</strong> Gratis! Kamu bisa langsung ambil ke lokasi kami.</li>
+                        <li><strong>Kurir Lokal / Ojol:</strong> Biaya ongkos kirim akan disesuaikan dengan jarak titik pengantaran (via GoSend/GrabExpress/Kurir kami).</li>
+                    </ol>
+                `
+            },
+            'faq': {
+                title: '🤔 FAQ (Tanya Jawab)',
+                content: `
+                    <p><strong>Q: Apakah kue ini tahan lama?</strong><br>
+                    A: Brownies kami tahan 3-4 hari di suhu ruang, dan hingga 7 hari jika disimpan dalam kulkas tertutup rapat.</p>
+                    
+                    <p><strong>Q: Apakah 100% Halal?</strong><br>
+                    A: Ya! Kami menjamin seluruh bahan yang digunakan 100% Halal dan higienis.</p>
+
+                    <p><strong>Q: Bisa request tambahan tulisan Happy Birthday?</strong><br>
+                    A: Tentu saja bisa! Silakan sampaikan *request* tulisanmu saat konfirmasi pesanan di WhatsApp ya.</p>
+
+                    <p><strong>Q: Pembayarannya lewat apa saja?</strong><br>
+                    A: Kami menerima pembayaran via Transfer Bank (BCA/BRI), DANA, OVO, ShopeePay, dan Cash (khusus pick-up).</p>
+                `
+            }
+        };
+
+        // Fungsi buka modal
+        window.openInfoModal = (type) => {
+            modalTitle.innerHTML = modalData[type].title;
+            modalContent.innerHTML = modalData[type].content;
+            
+            infoModalOverlay.classList.add('active');
+            infoModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Kunci scroll layar utama
+        };
+
+        // Fungsi tutup modal
+        const closeInfoModal = () => {
+            infoModalOverlay.classList.remove('active');
+            infoModal.classList.remove('active');
+            document.body.style.overflow = ''; // Buka scroll layar utama
+        };
+
+        closeModalBtn.addEventListener('click', closeInfoModal);
+        infoModalOverlay.addEventListener('click', closeInfoModal);
+
+        // ----------------------------------------------------
+        // LOGIKA IMAGE LIGHTBOX (POP-UP GAMBAR)
+        // ----------------------------------------------------
+        const imageLightbox = document.getElementById('image-lightbox');
+        const lightboxImgElement = document.getElementById('lightbox-img-element');
+        const closeLightboxBtn = document.getElementById('close-lightbox-btn');
+
+        // Fungsi Buka Lightbox Gambar
+        window.openLightbox = (imageSrc) => {
+            lightboxImgElement.src = imageSrc;
+            imageLightbox.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Kunci scroll layar utama
+        };
+
+        // Fungsi Tutup Lightbox Gambar
+        const closeLightbox = () => {
+            imageLightbox.classList.remove('active');
+            document.body.style.overflow = ''; // Buka scroll layar utama
+        };
+
+        // Event Listener untuk menutup gambar
+        closeLightboxBtn.addEventListener('click', closeLightbox);
+        imageLightbox.addEventListener('click', (e) => {
+            // Tutup jika yang di-klik adalah background gelapnya (bukan gambarnya)
+            if (e.target === imageLightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Render awal saat halaman dimuat
+        renderCart();
+        renderReviews();
     </script>
 </body>
 </html>
