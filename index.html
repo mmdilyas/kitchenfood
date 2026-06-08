@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitchen Food by Putri</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kitchen Food by Putri - Camilan Manis</title>
     
     <!-- Google Fonts: Plus Jakarta Sans & Fredoka -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,14 +18,14 @@
            CSS VARIABLES (PALET WARNA & UKURAN)
            ========================================= */
         :root {
-            --pink: #FFD1DC;       /* Pink Muda */
-            --mint: #B2F0E6;       /* Hijau Mint */
-            --white: #FFFFFF;      /* Putih */
-            --brown: #5C3D2E;      /* Cokelat Gelap (Teks Utama) */
-            --brown-light: #8B5E3C;/* Cokelat Muda (Teks Sekunder) */
-            --black: #1A1A1A;      /* Hitam (Khusus Sidebar Cart) */
-            --bg-light: #FAFAFA;   /* Background Body */
-            --gray-light: #F4F4F4; /* Background List Cart */
+            --pink: #FFD1DC;       
+            --mint: #B2F0E6;       
+            --white: #FFFFFF;      
+            --brown: #5C3D2E;      
+            --brown-light: #8B5E3C;
+            --black: #1A1A1A;      
+            --bg-light: #FAFAFA;   
+            --gray-light: #F4F4F4; 
             
             --font-heading: 'Fredoka', sans-serif;
             --font-body: 'Plus Jakarta Sans', sans-serif;
@@ -40,11 +40,49 @@
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        html {
-            scroll-behavior: smooth; /* Untuk scroll halus saat klik menu Navigasi */
+        /* =========================================
+           RESET & BASIC STYLES
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Toast Notification (Pesan Sukses) */
+        html {
+            scroll-behavior: smooth; 
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-light);
+            color: var(--brown);
+            line-height: 1.6;
+            overflow-x: hidden; /* Mencegah scroll horizontal di mobile */
+            width: 100%;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: var(--brown);
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: var(--font-body);
+            cursor: pointer;
+            border: none;
+            outline: none;
+            background: none;
+            min-height: 44px; /* Touch target minimum */
+        }
+
+        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -60,7 +98,6 @@
             transition: var(--transition);
             z-index: 9999;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            font-family: var(--font-body);
             text-align: center;
         }
         .toast.show {
@@ -70,47 +107,7 @@
         }
 
         /* =========================================
-           RESET & BASIC STYLES
-           ========================================= */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-body);
-            background-color: var(--bg-light);
-            color: var(--brown);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4 {
-            font-family: var(--font-heading);
-            color: var(--brown);
-            line-height: 1.2;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        button {
-            font-family: var(--font-body);
-            cursor: pointer;
-            border: none;
-            outline: none;
-            background: none;
-        }
-
-        /* =========================================
-           NAVBAR (STICKY)
+           NAVBAR (STICKY & TRANSPARAN SAAT SCROLL)
            ========================================= */
         header {
             position: sticky;
@@ -126,7 +123,6 @@
             transition: var(--transition);
         }
 
-        /* Kelas yang ditambahkan via JS saat scroll ke bawah */
         header.scrolled {
             background-color: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(8px);
@@ -137,7 +133,6 @@
             font-family: var(--font-heading);
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--brown);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -156,9 +151,7 @@
             transition: var(--transition);
         }
 
-        .nav-links a:hover {
-            color: var(--mint);
-        }
+        .nav-links a:hover { color: var(--mint); }
 
         .nav-links a::after {
             content: '';
@@ -172,9 +165,7 @@
             transition: var(--transition);
         }
 
-        .nav-links a:hover::after {
-            width: 100%;
-        }
+        .nav-links a:hover::after { width: 100%; }
 
         .cart-btn-wrapper {
             position: relative;
@@ -222,39 +213,22 @@
             min-height: 80vh;
         }
 
-        .hero-content {
-            max-width: 500px;
-        }
+        .hero-content { max-width: 500px; }
 
         .tagline {
             display: inline-block;
             background-color: var(--pink);
-            color: var(--brown);
             padding: 0.4rem 1rem;
             border-radius: var(--radius-pill);
             font-weight: 700;
             font-size: 0.9rem;
             margin-bottom: 1rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero h1 span {
-            color: #E27D60; /* A pop of darker orange/pink for emphasis */
-            position: relative;
-            display: inline-block;
-        }
-
-        .hero p {
-            font-size: 1.1rem;
-            color: var(--brown-light);
-            margin-bottom: 2rem;
-        }
+        .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+        .hero h1 span { color: #E27D60; }
+        .hero p { font-size: 1.1rem; color: var(--brown-light); margin-bottom: 2rem; }
 
         .btn-primary {
             background-color: var(--brown);
@@ -268,21 +242,77 @@
             gap: 10px;
             transition: var(--transition);
             box-shadow: 0 4px 15px rgba(92, 61, 46, 0.2);
+            min-width: unset;
         }
 
         .btn-primary:hover {
             transform: translateY(-5px) scale(1.03);
-            box-shadow: 0 8px 25px rgba(92, 61, 46, 0.3);
             background-color: #4A3022;
         }
 
-        /* Hero Visual (Blob) */
+        /* =========================================
+           HERO SLIDER (GAMBAR PRODUK)
+           ========================================= */
         .hero-visual {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
         }
+
+        .slider-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            z-index: 2;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 8px solid var(--white);
+            box-shadow: 0 20px 40px rgba(92, 61, 46, 0.15);
+            cursor: zoom-in;
+            display: none; 
+        }
+
+        .hero-image.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 3;
+            padding: 0 -20px;
+        }
+
+        .slider-btn {
+            background: var(--white);
+            color: var(--brown);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+
+        .slider-btn:hover { background: var(--pink); }
 
         .blob {
             position: absolute;
@@ -299,24 +329,6 @@
             100% { border-radius: 70% 30% 50% 70% / 30% 60% 40% 70%; }
         }
 
-        .hero-image {
-            width: 320px;
-            height: 320px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 8px solid var(--white);
-            box-shadow: 0 20px 40px rgba(92, 61, 46, 0.15);
-            animation: float 4s ease-in-out infinite;
-            position: relative;
-            z-index: 2;
-            cursor: zoom-in; /* Menambahkan kursor kaca pembesar saat di-hover */
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
         /* =========================================
            PRODUCT SECTION
            ========================================= */
@@ -325,20 +337,14 @@
             text-align: center;
         }
 
-        .products h2 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .products > p {
-            color: var(--brown-light);
-            margin-bottom: 3rem;
-        }
+        .products h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .products > p { color: var(--brown-light); margin-bottom: 3rem; }
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
+            padding: 20px 0;
         }
 
         .product-card {
@@ -348,7 +354,6 @@
             box-shadow: var(--shadow-soft);
             transition: var(--transition);
             text-align: left;
-            position: relative;
             display: flex;
             flex-direction: column;
         }
@@ -370,25 +375,11 @@
             transition: var(--transition);
         }
 
-        .product-card:nth-child(even) .product-img {
-            background-color: var(--mint);
-        }
+        .product-card:nth-child(even) .product-img { background-color: var(--mint); }
+        .product-card:hover .product-img { transform: scale(1.05); }
 
-        .product-card:hover .product-img {
-            transform: scale(1.05);
-        }
-
-        .product-title {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-desc {
-            font-size: 0.9rem;
-            color: var(--brown-light);
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-        }
+        .product-title { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .product-desc { font-size: 0.9rem; color: var(--brown-light); margin-bottom: 1.5rem; flex-grow: 1; }
 
         .product-footer {
             display: flex;
@@ -400,12 +391,11 @@
             font-family: var(--font-heading);
             font-size: 1.3rem;
             font-weight: 600;
-            color: var(--brown);
         }
 
         .add-to-cart {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background-color: var(--brown);
             color: var(--white);
             border-radius: 50%;
@@ -430,15 +420,8 @@
             text-align: center;
         }
 
-        .reviews h2 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .reviews > p {
-            color: var(--brown-light);
-            margin-bottom: 3rem;
-        }
+        .reviews h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .reviews > p { color: var(--brown-light); margin-bottom: 3rem; }
 
         .reviews-container {
             display: grid;
@@ -456,14 +439,8 @@
             padding-right: 10px;
         }
 
-        /* Kustomisasi scrollbar untuk list review */
-        .review-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .review-list::-webkit-scrollbar-thumb {
-            background-color: var(--pink);
-            border-radius: 10px;
-        }
+        .review-list::-webkit-scrollbar { width: 6px; }
+        .review-list::-webkit-scrollbar-thumb { background-color: var(--pink); border-radius: 10px; }
 
         .review-card {
             background-color: var(--bg-light);
@@ -472,28 +449,10 @@
             box-shadow: var(--shadow-soft);
         }
 
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-
-        .review-name {
-            font-weight: 700;
-            color: var(--brown);
-        }
-
-        .review-stars {
-            color: #FFD700;
-            font-size: 0.9rem;
-        }
-
-        .review-text {
-            font-size: 0.95rem;
-            color: var(--brown-light);
-            font-style: italic;
-        }
+        .review-header { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
+        .review-name { font-weight: 700; color: var(--brown); }
+        .review-stars { color: #FFD700; font-size: 0.9rem; }
+        .review-text { font-size: 0.95rem; color: var(--brown-light); font-style: italic; }
 
         .review-form-container {
             background-color: var(--pink);
@@ -501,18 +460,9 @@
             border-radius: var(--radius-md);
         }
 
-        .review-form-container h3 {
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            font-family: var(--font-heading);
-            color: var(--brown);
-        }
-
-        .review-form-container form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+        .review-form-container h3 { margin-bottom: 1.5rem; font-size: 1.5rem; font-family: var(--font-heading); }
+        
+        .review-form-container form { display: flex; flex-direction: column; gap: 1rem; }
 
         .review-form-container input,
         .review-form-container select,
@@ -526,414 +476,236 @@
             outline: none;
         }
 
-        .review-form-container textarea {
-            resize: vertical;
-        }
-
-        @media (max-width: 768px) {
-            .reviews-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
         /* =========================================
-           CART SIDEBAR (PENTING)
+           CART SIDEBAR
            ========================================= */
         .cart-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(3px);
             z-index: 999;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             transition: var(--transition);
         }
 
-        .cart-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .cart-overlay.active { opacity: 1; visibility: visible; }
 
         .cart-sidebar {
             position: fixed;
-            top: 0;
-            right: -450px;
-            width: 100%;
-            max-width: 400px;
-            height: 100vh;
+            top: 0; right: -450px;
+            width: 100%; max-width: 400px; height: 100vh;
             background-color: var(--gray-light);
             z-index: 1000;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: -5px 0 25px rgba(0,0,0,0.1);
         }
 
-        .cart-sidebar.open {
-            right: 0;
-        }
+        .cart-sidebar.open { right: 0; }
 
-        /* Header Cart - Wajib Putih & Hitam */
         .cart-header {
             background-color: var(--white);
             color: var(--black);
             padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid #EAEAEA;
         }
 
-        .cart-header h3 {
-            color: var(--black);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .cart-header h3 { color: var(--black); margin: 0; display: flex; align-items: center; gap: 10px; }
 
         .close-cart {
-            background: #F4F4F4;
-            color: var(--black);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: #F4F4F4; color: var(--black);
+            width: 35px; height: 35px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
             transition: var(--transition);
         }
+        .close-cart:hover { background: #E0E0E0; transform: scale(1.1); }
 
-        .close-cart:hover {
-            background: #E0E0E0;
-            transform: scale(1.1);
-        }
-
-        /* Body Cart - List Item */
         .cart-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            flex: 1; overflow-y: auto; padding: 1.5rem;
+            display: flex; flex-direction: column; gap: 1rem;
         }
 
         .cart-item {
-            background-color: var(--white);
-            border-radius: var(--radius-sm);
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            background-color: var(--white); border-radius: var(--radius-sm);
+            padding: 1rem; display: flex; align-items: center; gap: 1rem;
             position: relative;
         }
 
         .cart-item-emoji {
-            background-color: var(--pink);
-            width: 60px;
-            height: 60px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.8rem;
+            width: 60px; height: 60px; border-radius: var(--radius-sm);
+            display: flex; justify-content: center; align-items: center; font-size: 1.8rem;
         }
 
-        .cart-item-info h4 {
-            font-size: 1rem;
-            color: var(--brown);
-            margin-bottom: 0.2rem;
-            font-family: var(--font-body);
-            font-weight: 600;
-        }
-
-        .cart-item-price {
-            font-weight: 700;
-            color: var(--brown-light);
-            font-size: 0.9rem;
-        }
-
-        .cart-item-qty {
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-        }
+        .cart-item-info h4 { font-size: 1rem; margin-bottom: 0.2rem; }
+        .cart-item-price { font-weight: 700; color: var(--brown-light); font-size: 0.9rem; }
+        .cart-item-qty { margin-top: 5px; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
 
         .qty-btn {
-            background: var(--gray-light);
-            width: 24px;
-            height: 24px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
+            background: var(--gray-light); width: 24px; height: 24px; border-radius: 4px;
+            display: flex; justify-content: center; align-items: center; font-weight: bold; min-height: 24px;
         }
 
         .remove-item {
-            position: absolute;
-            right: 1rem;
-            top: 1rem;
-            color: #FF5A5F;
-            opacity: 0.6;
-            transition: var(--transition);
+            position: absolute; right: 1rem; top: 1rem;
+            color: #FF5A5F; opacity: 0.6; transition: var(--transition);
         }
+        .remove-item:hover { opacity: 1; transform: scale(1.1); }
 
-        .remove-item:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        /* Footer Cart - Wajib Putih & Hitam */
         .cart-footer {
-            background-color: var(--white);
-            color: var(--black);
-            padding: 1.5rem;
-            border-top: 1px solid #EAEAEA;
+            background-color: var(--white); color: var(--black);
+            padding: 1.5rem; border-top: 1px solid #EAEAEA;
         }
 
         .cart-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: var(--font-heading);
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: var(--font-heading); font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem;
+        }
+
+        /* Input Nama Pelanggan di Keranjang */
+        .cart-customer-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #EAEAEA;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .cart-customer-input:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 3px rgba(255, 209, 220, 0.3);
         }
 
         .btn-checkout {
-            width: 100%;
-            background-color: var(--black);
-            color: var(--white);
-            padding: 1rem;
-            border-radius: var(--radius-pill);
-            font-size: 1.1rem;
-            font-weight: 600;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            transition: var(--transition);
+            width: 100%; background-color: var(--black); color: var(--white);
+            padding: 1rem; border-radius: var(--radius-pill); font-size: 1.1rem; font-weight: 600;
+            display: flex; justify-content: center; align-items: center; gap: 10px; transition: var(--transition);
+        }
+        .btn-checkout:hover { background-color: #333; transform: translateY(-3px); }
+
+        /* =========================================
+           FOOTER SECTION
+           ========================================= */
+        .site-footer {
+            background-color: var(--white);
+            padding: 4rem 5% 2rem;
+            border-top: 2px dashed var(--pink);
+            margin-top: 2rem;
         }
 
-        .btn-checkout:hover {
-            background-color: #333;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        .footer-content {
+            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem;
+            max-width: 1200px; margin: 0 auto;
+        }
+
+        .footer-brand p { color: var(--brown-light); margin-top: 1rem; font-size: 0.95rem; }
+
+        .social-links { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .social-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            background-color: var(--bg-light); display: flex; justify-content: center; align-items: center;
+            transition: var(--transition); color: var(--brown);
+        }
+        .social-icon:hover { background-color: var(--pink); transform: translateY(-5px); }
+
+        .footer-col h4 { margin-bottom: 1.5rem; font-size: 1.2rem; }
+
+        .footer-links { display: flex; flex-direction: column; gap: 1rem; }
+        .footer-links a { display: flex; align-items: center; gap: 8px; color: var(--brown-light); transition: var(--transition); }
+        .footer-links a:hover { color: var(--brown); transform: translateX(5px); }
+
+        .footer-bottom {
+            text-align: center; margin-top: 4rem; padding-top: 2rem;
+            border-top: 1px solid #EAEAEA; color: var(--brown-light); font-size: 0.9rem;
         }
 
         /* =========================================
-           MODAL / POP-UP INFORMASI (BANTUAN)
+           INFO MODAL & LIGHTBOX
            ========================================= */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);
+            z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition);
         }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
 
         .modal-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -40%) scale(0.95);
-            width: 90%;
-            max-width: 500px;
-            background: var(--white);
-            z-index: 2001;
-            border-radius: var(--radius-md);
-            padding: 2rem;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+            background: var(--white); width: 90%; max-width: 500px;
+            border-radius: var(--radius-md); padding: 2rem; z-index: 2001;
+            opacity: 0; visibility: hidden; transition: var(--transition); box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
+        .modal-box.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
 
-        .modal-box.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
-        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px dashed var(--pink); padding-bottom: 1rem; }
+        .close-modal { background: var(--gray-light); width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: var(--transition); }
+        .close-modal:hover { background: var(--pink); transform: rotate(90deg); }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px dashed var(--pink);
-        }
-
-        .modal-header h3 {
-            font-size: 1.5rem;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .close-modal {
-            background: var(--gray-light);
-            color: var(--brown);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .close-modal:hover {
-            background: var(--pink);
-            transform: scale(1.1) rotate(90deg);
-        }
-
-        .modal-content {
-            color: var(--brown-light);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            max-height: 60vh;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .modal-content::-webkit-scrollbar { width: 6px; }
-        .modal-content::-webkit-scrollbar-thumb { background-color: var(--pink); border-radius: 10px; }
-
-        .modal-content ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .modal-content { color: var(--brown-light); font-size: 0.95rem; }
+        .modal-content ul { padding-left: 1.5rem; list-style-type: disc; margin-bottom: 1rem; }
         .modal-content li { margin-bottom: 0.5rem; }
         .modal-content strong { color: var(--brown); }
         .modal-content p { margin-bottom: 1rem; }
 
-        /* =========================================
-           IMAGE LIGHTBOX (POP-UP GAMBAR)
-           ========================================= */
+        /* Lightbox */
         .lightbox-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Background gelap transparan */
-            backdrop-filter: blur(8px);
-            z-index: 3000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+            z-index: 3000; display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: var(--transition);
         }
-
-        .lightbox-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .lightbox-overlay.active { opacity: 1; visibility: visible; }
 
         .lightbox-img {
-            max-width: 90%;
-            max-height: 90vh;
-            border-radius: var(--radius-md);
-            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
-            transform: scale(0.8);
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            object-fit: contain;
+            max-width: 90%; max-height: 90vh; border-radius: var(--radius-md);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5); transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); object-fit: contain;
         }
-
-        .lightbox-overlay.active .lightbox-img {
-            transform: scale(1);
-        }
+        .lightbox-overlay.active .lightbox-img { transform: scale(1); }
 
         .close-lightbox {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--white);
-            color: var(--brown);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 3001;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: var(--transition);
+            position: absolute; top: 20px; right: 20px; background: var(--white); color: var(--brown);
+            width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            z-index: 3001; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: var(--transition);
         }
-
-        .close-lightbox:hover {
-            background: var(--pink);
-            transform: scale(1.1) rotate(90deg);
-        }
+        .close-lightbox:hover { background: var(--pink); transform: scale(1.1) rotate(90deg); }
 
         /* =========================================
-           RESPONSIVE DESIGN (HP & TABLET)
+           RESPONSIVE DESIGN
            ========================================= */
         @media (max-width: 768px) {
-            .nav-links {
-                display: none; /* Sembunyikan menu di mobile untuk layout minimalis ini */
-            }
+            .nav-links { display: none; }
+            .hero { grid-template-columns: 1fr; text-align: center; padding-top: 2rem; }
+            .hero-content { margin: 0 auto; }
+            .hero h1 { font-size: 2.5rem !important; }
             
-            .hero {
-                grid-template-columns: 1fr;
-                text-align: center;
-                padding-top: 2rem;
-            }
-
-            .hero-content {
-                margin: 0 auto;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .blob {
-                width: 300px;
-                height: 300px;
-            }
-
-            .hero-image {
-                width: 220px;
-                height: 220px;
-                border-width: 6px;
-            }
+            .slider-container, .hero-image { width: 260px; height: 260px; }
+            .blob { width: 320px; height: 320px; }
             
-            .cart-sidebar {
-                max-width: 100%;
-                right: -100%;
-            }
+            .reviews-container { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+            .footer-links { align-items: center; }
+            .social-links { justify-content: center; }
+            .cart-sidebar { max-width: 100%; right: -100%; }
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem !important; }
+            .hero { padding: 2rem 5% !important; }
+            .slider-container, .hero-image { width: 220px; height: 220px; }
+            .blob { width: 280px; height: 280px; }
         }
     </style>
 </head>
 <body>
 
     <!-- NAVBAR -->
-    <header>
+    <header id="main-header">
         <div class="logo">
-            <i data-lucide="cookie" color="#5C3D2E"></i> KitchenFood.Putri
+            <i data-lucide="cookie" color="#5C3D2E"></i> SweetBite
         </div>
         <nav class="nav-links">
             <a href="#hero">Beranda</a>
@@ -943,7 +715,7 @@
         </nav>
         <button class="cart-btn-wrapper" id="open-cart-btn" aria-label="Buka Keranjang">
             <i data-lucide="shopping-bag" color="#5C3D2E" size="20"></i>
-            <span class="cart-badge">3</span>
+            <span class="cart-badge" id="cart-badge" style="display:none;">0</span>
         </button>
     </header>
 
@@ -953,15 +725,25 @@
             <div class="hero-content">
                 <span class="tagline">100% Homemade</span>
                 <h1>Manisnya Hari Ini <span>Dimulai</span> Dari Sini</h1>
-                <p>Nikmati aneka dessert yang dibuat dengan bahan pilihan dan resep rahasia.</p>
+                <p>Nikmati Fudgy Brownies premium dan aneka camilan tradisional yang dibuat dengan bahan pilihan dan penuh cinta.</p>
                 <a href="#products" class="btn-primary">
                     Pesan Sekarang <i data-lucide="arrow-right" size="20"></i>
                 </a>
             </div>
             <div class="hero-visual">
                 <div class="blob"></div>
-                <!-- Menggunakan gambar asli berkualitas tinggi & Event onclick Lightbox -->
-                <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=600&auto=format&fit=crop" alt="Premium Brownies" class="hero-image" onclick="openLightbox(this.src)">
+                <div class="slider-container" id="hero-slider">
+                    <!-- Foto Produk Slider (Terkoneksi dengan Lightbox) -->
+                    <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=600&auto=format&fit=crop" alt="Premium Brownies" class="hero-image active" onclick="openLightbox(this.src)">
+                    <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=600&auto=format&fit=crop" alt="Kue Kering" class="hero-image" onclick="openLightbox(this.src)">
+                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=600&auto=format&fit=crop" alt="Kue Spesial" class="hero-image" onclick="openLightbox(this.src)">
+                </div>
+                
+                <!-- Navigasi Slider -->
+                <div class="slider-nav">
+                    <button class="slider-btn" onclick="prevSlide()" aria-label="Gambar Sebelumnya"><i data-lucide="chevron-left"></i></button>
+                    <button class="slider-btn" onclick="nextSlide()" aria-label="Gambar Selanjutnya"><i data-lucide="chevron-right"></i></button>
+                </div>
             </div>
         </section>
 
@@ -1020,7 +802,7 @@
         <!-- REVIEWS SECTION -->
         <section class="reviews" id="reviews">
             <h2>Ulasan Pelanggan</h2>
-            <p>Apa kata mereka tentang Kitchen Food?</p>
+            <p>Apa kata mereka tentang manisnya Kitchen Food?</p>
             
             <div class="reviews-container">
                 <div class="review-list" id="review-list">
@@ -1046,122 +828,6 @@
     </main>
 
     <!-- FOOTER SECTION -->
-    <style>
-        /* =========================================
-           FOOTER
-           ========================================= */
-        .site-footer {
-            background-color: var(--white);
-            padding: 4rem 5% 2rem;
-            margin-top: 4rem;
-            border-top: 2px dashed var(--pink);
-            position: relative;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-brand .logo {
-            margin-bottom: 1rem;
-        }
-
-        .footer-brand p {
-            color: var(--brown-light);
-            font-size: 0.95rem;
-            max-width: 300px;
-        }
-
-        .footer-col h4 {
-            font-family: var(--font-heading);
-            font-size: 1.2rem;
-            color: var(--brown);
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        .footer-col h4::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -5px;
-            width: 50%;
-            height: 3px;
-            background-color: var(--mint);
-            border-radius: 2px;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .footer-links a {
-            color: var(--brown-light);
-            font-size: 0.95rem;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .footer-links a:hover {
-            color: var(--brown);
-            transform: translateX(5px);
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            background-color: var(--bg-light);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--brown);
-            transition: var(--transition);
-        }
-
-        .social-icon:hover {
-            background-color: var(--pink);
-            transform: translateY(-5px);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid var(--gray-light);
-            color: var(--brown-light);
-            font-size: 0.9rem;
-        }
-
-        .footer-bottom span {
-            color: var(--pink);
-            font-weight: bold;
-        }
-
-        /* Responsive Footer */
-        @media (max-width: 768px) {
-            .site-footer {
-                padding: 3rem 5% 1.5rem;
-            }
-            .footer-content {
-                gap: 2rem;
-            }
-        }
-    </style>
-
     <footer class="site-footer" id="footer">
         <div class="footer-content">
             <div class="footer-col footer-brand">
@@ -1169,6 +835,14 @@
                     <i data-lucide="cookie" color="#5C3D2E"></i> KitchenFood.Putri
                 </div>
                 <p>Menghadirkan kebahagiaan lewat setiap gigitan. Dibuat dengan bahan premium dan penuh cinta setiap harinya.</p>
+                <div class="social-links">
+                    <!-- Menggunakan SVG untuk Instagram agar tidak diblokir AdBlock -->
+                    <a href="https://www.instagram.com/kitchenfood.putri/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                    </a>
+                    <a href="#" class="social-icon" aria-label="Facebook"><i data-lucide="facebook" size="20"></i></a>
+                    <a href="#" class="social-icon" aria-label="Twitter"><i data-lucide="twitter" size="20"></i></a>
+                </div>
             </div>
             <div class="footer-col">
                 <h4>Bantuan</h4>
@@ -1178,52 +852,51 @@
                     <a href="#" onclick="openInfoModal('faq'); return false;"><i data-lucide="chevron-right" size="16"></i> FAQ</a>
                 </div>
             </div>
-
             <div class="footer-col">
                 <h4>Hubungi Kami</h4>
                 <div class="footer-links">
                     <a href="https://maps.app.goo.gl/7cc6ER3jERSTWC9Z9" target="_blank" rel="noopener noreferrer"><i data-lucide="map-pin" size="16"></i> Pasuruan</a>
                     <a href="https://wa.me/6285649681417" target="_blank" rel="noopener noreferrer"><i data-lucide="phone" size="16"></i> +6285649681417</a>
                     <a href="https://www.instagram.com/kitchenfood.putri/" target="_blank" rel="noopener noreferrer">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-                         kitchenfood.putri
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        kitchenfood.putri
                     </a>
                 </div>
             </div>
         </div>
-
         <div class="footer-bottom">
-            <p>&copy; 2026 Kitchen Food by Putri</p>
+            <p>Dibuat dengan <span style="color: var(--pink);">♥</span> &copy; 2026 Kitchen Food by Putri</p>
         </div>
     </footer>
 
-    <!-- CART SIDEBAR & OVERLAY -->
+    <!-- ==========================================
+         OVERLAYS & MODALS
+         ========================================== -->
+    
+    <!-- CART SIDEBAR -->
     <div class="cart-overlay" id="cart-overlay"></div>
     <aside class="cart-sidebar" id="cart-sidebar">
-        <!-- Header Cart (Putih & Hitam) -->
         <div class="cart-header">
             <h3><i data-lucide="shopping-cart"></i> Keranjang Anda</h3>
             <button class="close-cart" id="close-cart-btn" aria-label="Tutup"><i data-lucide="x" size="20"></i></button>
         </div>
-
-        <!-- Body Cart (Abu-abu muda / Putih) -->
-        <div class="cart-body">
-            <!-- Isi cart akan di-generate otomatis oleh JavaScript -->
+        <div class="cart-body" id="cart-body">
+            <!-- Isi cart di-generate via JS -->
         </div>
-
-        <!-- Footer Cart (Putih & Hitam) -->
         <div class="cart-footer">
             <div class="cart-total">
                 <span>Total:</span>
                 <span id="cart-total-price">Rp 0</span>
             </div>
-            <button class="btn-checkout">
+            <!-- Input Nama Pelanggan -->
+            <input type="text" id="customer-name" class="cart-customer-input" placeholder="Masukkan nama Anda..." required>
+            <button class="btn-checkout" onclick="handleCheckout()">
                 Checkout Sekarang <i data-lucide="arrow-right" size="20"></i>
             </button>
         </div>
     </aside>
 
-    <!-- MODAL / POP-UP INFORMASI (BANTUAN) -->
+    <!-- INFO MODAL (Bantuan Footer) -->
     <div class="modal-overlay" id="info-modal-overlay"></div>
     <div class="modal-box" id="info-modal">
         <div class="modal-header">
@@ -1231,373 +904,335 @@
             <button class="close-modal" id="close-modal-btn" aria-label="Tutup Popup"><i data-lucide="x" size="20"></i></button>
         </div>
         <div class="modal-content" id="modal-content">
-            <!-- Konten akan di-generate via JavaScript -->
+            <!-- Konten di-generate via JS -->
         </div>
     </div>
 
-    <!-- IMAGE LIGHTBOX MODAL -->
+    <!-- IMAGE LIGHTBOX -->
     <div class="lightbox-overlay" id="image-lightbox">
         <button class="close-lightbox" id="close-lightbox-btn" aria-label="Tutup Gambar"><i data-lucide="x" size="24"></i></button>
         <img src="" alt="Gambar Diperbesar" class="lightbox-img" id="lightbox-img-element">
     </div>
 
-    <!-- JAVASCRIPT -->
+    <!-- ==========================================
+         JAVASCRIPT LOGIC
+         ========================================== -->
     <script>
-        // Inisialisasi ikon dari library Lucide
-        lucide.createIcons();
-
-        // ----------------------------------------------------
-        // UI & INTERAKSI DASAR (SIDEBAR KERANJANG)
-        // ----------------------------------------------------
-        const cartBtn = document.getElementById('open-cart-btn');
-        const closeCartBtn = document.getElementById('close-cart-btn');
-        const cartSidebar = document.getElementById('cart-sidebar');
-        const cartOverlay = document.getElementById('cart-overlay');
-        const header = document.querySelector('header');
-
-        // Event listener untuk efek transparan pada header saat di-scroll
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        function openCart() {
-            cartSidebar.classList.add('open');
-            cartOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; 
-        }
-
-        function closeCart() {
-            cartSidebar.classList.remove('open');
-            cartOverlay.classList.remove('active');
-            document.body.style.overflow = ''; 
-        }
-
-        cartBtn.addEventListener('click', openCart);
-        closeCartBtn.addEventListener('click', closeCart);
-        cartOverlay.addEventListener('click', closeCart);
-
-        // ----------------------------------------------------
-        // SISTEM TOAST (NOTIFIKASI PESAN BOX)
-        // ----------------------------------------------------
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        document.body.appendChild(toast);
-        let toastTimeout;
-
-        function showToast(message) {
-            toast.innerText = message;
-            toast.classList.add('show');
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // ----------------------------------------------------
-        // LOGIKA KERANJANG BELANJA (CART)
-        // ----------------------------------------------------
-        let cart = []; // Array untuk menyimpan data produk
-
-        const cartBody = document.querySelector('.cart-body');
-        const cartTotalPrice = document.getElementById('cart-total-price');
-        const cartBadge = document.querySelector('.cart-badge');
-
-        // Fungsi format angka ke Rupiah
-        const formatRupiah = (number) => {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
-        };
-
-        // Fungsi render (menampilkan data keranjang ke HTML)
-        function renderCart() {
-            cartBody.innerHTML = '';
-            let total = 0;
-            let totalItems = 0;
-
-            if (cart.length === 0) {
-                cartBody.innerHTML = '<div style="text-align:center; padding: 3rem 1rem; color: var(--brown-light);">Keranjang masih kosong nih. Yuk pilih menu manis favoritmu!</div>';
+        // Memastikan semua elemen siap sebelum menjalankan JS
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Inisialisasi ikon Lucide
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
 
-            cart.forEach((item, index) => {
-                total += item.price * item.qty;
-                totalItems += item.qty;
-
-                const itemEl = document.createElement('div');
-                itemEl.className = 'cart-item';
-                
-                // Menentukan background emoji secara berselang-seling
-                const bgColors = ['var(--pink)', 'var(--mint)', '#FFE5B4', '#E6E6FA'];
-                const bgColor = bgColors[index % bgColors.length];
-
-                itemEl.innerHTML = `
-                    <div class="cart-item-emoji" style="background: ${bgColor}">${item.emoji}</div>
-                    <div class="cart-item-info">
-                        <h4>${item.title}</h4>
-                        <div class="cart-item-price">${formatRupiah(item.price)}</div>
-                        <div class="cart-item-qty">
-                            <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
-                            <span>${item.qty}</span>
-                            <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
-                        </div>
-                    </div>
-                    <button class="remove-item" onclick="removeItem(${index})"><i data-lucide="trash-2" size="18"></i></button>
-                `;
-                cartBody.appendChild(itemEl);
+            // ----------------------------------------------------
+            // UTILITAS & NAVBAR SCROLL
+            // ----------------------------------------------------
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) { header.classList.add('scrolled'); } 
+                else { header.classList.remove('scrolled'); }
             });
 
-            // Update Total Harga & Badge Angka
-            cartTotalPrice.innerText = formatRupiah(total);
-            cartBadge.innerText = totalItems;
+            // Sistem Toast (Pesan Notifikasi)
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            document.body.appendChild(toast);
+            let toastTimeout;
+
+            window.showToast = (message) => {
+                toast.innerText = message;
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3000);
+            };
+
+            const formatRupiah = (number) => {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+            };
+
+            // ----------------------------------------------------
+            // HERO SLIDER
+            // ----------------------------------------------------
+            window.currentSlide = 0;
+            const slides = document.querySelectorAll('.hero-image');
+
+            window.showSlide = (index) => {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); });
+            };
+
+            window.nextSlide = () => {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            };
+
+            window.prevSlide = () => {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+            };
+
+            setInterval(nextSlide, 5000); // Auto slide tiap 5 detik
+
+            // ----------------------------------------------------
+            // KERANJANG BELANJA (CART) & CHECKOUT
+            // ----------------------------------------------------
+            let cart = [];
+            const cartSidebar = document.getElementById('cart-sidebar');
+            const cartOverlay = document.getElementById('cart-overlay');
+            const cartBody = document.getElementById('cart-body');
+            const cartTotalPrice = document.getElementById('cart-total-price');
+            const cartBadge = document.getElementById('cart-badge');
             
-            // Sembunyikan badge jika 0
-            if(totalItems > 0) {
-                cartBadge.style.display = 'flex';
-            } else {
-                cartBadge.style.display = 'none';
-            }
+            // Buka / Tutup Keranjang
+            window.openCart = () => {
+                cartSidebar.classList.add('open'); cartOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
+            window.closeCart = () => {
+                cartSidebar.classList.remove('open'); cartOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
 
-            // Render ulang ikon Lucide untuk elemen yang baru dibuat di keranjang
-            lucide.createIcons();
-        }
+            document.getElementById('open-cart-btn').addEventListener('click', openCart);
+            document.getElementById('close-cart-btn').addEventListener('click', closeCart);
+            cartOverlay.addEventListener('click', closeCart);
 
-        // Fungsi Tambah/Kurangi Qty (+ / -)
-        window.updateQty = (index, change) => {
-            cart[index].qty += change;
-            if (cart[index].qty <= 0) {
-                cart.splice(index, 1); // Hapus item jika qty mencapai 0
-            }
-            renderCart();
-        };
+            // Render Keranjang
+            window.renderCart = () => {
+                cartBody.innerHTML = '';
+                let total = 0, totalItems = 0;
 
-        // Fungsi Hapus Item dari Keranjang (Ikon Trash)
-        window.removeItem = (index) => {
-            cart.splice(index, 1);
-            renderCart();
-            showToast("Item dihapus dari keranjang 🗑️");
-        };
-
-        // Event Listener: Klik "Tambah ke Keranjang" (+) di daftar produk
-        document.querySelectorAll('.add-to-cart').forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                // Cari elemen card terdekat untuk mengambil data
-                const card = e.target.closest('.product-card');
-                const title = card.querySelector('.product-title').innerText;
-                const priceText = card.querySelector('.price').innerText;
-                
-                // Bersihkan teks "Rp" dan titik, ubah ke angka murni
-                const price = parseInt(priceText.replace(/[^0-9]/g, ''));
-                const emoji = card.querySelector('.product-img').innerText;
-
-                // Cek apakah item sudah ada di keranjang
-                const existingItem = cart.find(item => item.title === title);
-                if (existingItem) {
-                    existingItem.qty += 1;
-                } else {
-                    cart.push({ title, price, emoji, qty: 1 });
+                if (cart.length === 0) {
+                    cartBody.innerHTML = '<div style="text-align:center; padding: 3rem 1rem; color: var(--brown-light);">Keranjang masih kosong nih. Yuk pilih menu manis favoritmu!</div>';
                 }
 
+                cart.forEach((item, index) => {
+                    total += item.price * item.qty;
+                    totalItems += item.qty;
+
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'cart-item';
+                    const bgColors = ['var(--pink)', 'var(--mint)', '#FFE5B4', '#E6E6FA'];
+                    const bgColor = bgColors[index % bgColors.length];
+
+                    itemEl.innerHTML = `
+                        <div class="cart-item-emoji" style="background: ${bgColor}">${item.emoji}</div>
+                        <div class="cart-item-info">
+                            <h4>${item.title}</h4>
+                            <div class="cart-item-price">${formatRupiah(item.price)}</div>
+                            <div class="cart-item-qty">
+                                <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="remove-item" onclick="removeItem(${index})" aria-label="Hapus Item"><i data-lucide="trash-2" size="18"></i></button>
+                    `;
+                    cartBody.appendChild(itemEl);
+                });
+
+                cartTotalPrice.innerText = formatRupiah(total);
+                cartBadge.innerText = totalItems;
+                cartBadge.style.display = totalItems > 0 ? 'flex' : 'none';
+                
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            };
+
+            // Modifikasi Qty & Hapus Item
+            window.updateQty = (index, change) => {
+                cart[index].qty += change;
+                if (cart[index].qty <= 0) cart.splice(index, 1);
                 renderCart();
-                showToast(`Yeay! ${title} ditambahkan! 🍰`);
+            };
+
+            window.removeItem = (index) => {
+                cart.splice(index, 1); renderCart();
+                showToast("Item dihapus dari keranjang 🗑️");
+            };
+
+            // Tambah ke Keranjang
+            document.querySelectorAll('.add-to-cart').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    const card = e.target.closest('.product-card');
+                    const title = card.querySelector('.product-title').innerText;
+                    const priceText = card.querySelector('.price').innerText;
+                    const price = parseInt(priceText.replace(/[^0-9]/g, ''));
+                    const emoji = card.querySelector('.product-img').innerText;
+
+                    const existingItem = cart.find(item => item.title === title);
+                    if (existingItem) existingItem.qty += 1;
+                    else cart.push({ title, price, emoji, qty: 1 });
+
+                    renderCart();
+                    showToast(`Yeay! ${title} ditambahkan! 🍰`);
+                });
             });
-        });
 
-        // Event Listener: Tombol Checkout (Terkoneksi WhatsApp)
-        document.querySelector('.btn-checkout').addEventListener('click', () => {
-            if (cart.length === 0) {
-                showToast("Oops, Keranjang Anda masih kosong!");
-                return;
-            }
+            // Proses Checkout ke WhatsApp
+            window.handleCheckout = () => {
+                const customerInput = document.getElementById('customer-name');
+                const customerName = customerInput.value.trim();
 
-            // Hitung total harga tagihan
-            let totalTagihan = 0;
-            cart.forEach(item => {
-                totalTagihan += item.price * item.qty;
+                if (cart.length === 0) {
+                    showToast("Oops, Keranjang Anda masih kosong!");
+                    return;
+                }
+
+                if (!customerName) {
+                    showToast("Mohon masukkan nama Anda terlebih dahulu! 😊");
+                    customerInput.focus();
+                    return;
+                }
+
+                let totalTagihan = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+                
+                // Format Pesan WhatsApp
+                let waText = `Halo Admin KitchenFood.Putri,\n\nSaya ingin memesan atas nama: *${customerName}*\n\nDetail pesanan:\n`;
+                cart.forEach((item, index) => {
+                    waText += `${index + 1}. ${item.title} (${item.qty}x) - ${formatRupiah(item.price * item.qty)}\n`;
+                });
+                waText += `\n*Total Tagihan: ${formatRupiah(totalTagihan)}*`;
+                waText += "\n\nMohon info ketersediaan dan total pembayarannya ya. Terima kasih! 🍰";
+
+                const waNumber = "6285649681417";
+                const waUrl = `https://api.whatsapp.com/send?phone=${waNumber}&text=${encodeURIComponent(waText)}`;
+                
+                window.open(waUrl, '_blank');
+                showToast("Mengarahkan ke WhatsApp... 🎉");
+                
+                // Reset State
+                cart = []; 
+                customerInput.value = ''; 
+                renderCart(); 
+                closeCart(); 
+            };
+
+            // ----------------------------------------------------
+            // ULASAN PELANGGAN (REVIEWS)
+            // ----------------------------------------------------
+            let reviewsData = [
+                { name: "Siska Saraswati", rating: 5, text: "Browniesnya beneran fudgy dan nyoklat banget! Anak-anak pada suka." },
+                { name: "Bima Arya", rating: 4, text: "Kue susnya mantap, vlanya lumer. Cuma pengirimannya agak telat dikit." },
+                { name: "Dina Amanda", rating: 5, text: "Sumpah ini cookies terenak yang pernah aku coba. Strawberrynya kerasa pas, gak kemanisan." }
+            ];
+
+            const reviewListEl = document.getElementById('review-list');
+            const reviewForm = document.getElementById('review-form');
+
+            const renderReviews = () => {
+                reviewListEl.innerHTML = '';
+                reviewsData.forEach(rev => {
+                    const stars = '⭐'.repeat(rev.rating);
+                    const reviewCard = document.createElement('div');
+                    reviewCard.className = 'review-card';
+                    reviewCard.innerHTML = `
+                        <div class="review-header">
+                            <span class="review-name">${rev.name}</span>
+                            <span class="review-stars">${stars}</span>
+                        </div>
+                        <p class="review-text">"${rev.text}"</p>
+                    `;
+                    reviewListEl.appendChild(reviewCard);
+                });
+            };
+
+            reviewForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('rev-name').value;
+                const rating = parseInt(document.getElementById('rev-rating').value);
+                const text = document.getElementById('rev-text').value;
+
+                reviewsData.unshift({ name, rating, text });
+                renderReviews();
+                showToast("Terima kasih atas ulasan manismu! 💖");
+                reviewForm.reset();
             });
 
-            // Menyusun format pesan WhatsApp (Terkoneksi langsung ke WA Anda)
-            let waText = "Halo Admin KitchenFood.Putri, saya mau memesan:\n\n";
-            cart.forEach((item, index) => {
-                waText += `${index + 1}. ${item.title} (${item.qty}x) - ${formatRupiah(item.price * item.qty)}\n`;
+            // ----------------------------------------------------
+            // INFO MODAL (POPUP BANTUAN)
+            // ----------------------------------------------------
+            const infoModalData = {
+                'cara-pesan': {
+                    title: "Cara Memesan 🛒",
+                    content: `<p>Ikuti langkah mudah berikut untuk menikmati camilan manis kami:</p>
+                              <ul>
+                                <li>Pilih menu favorit Anda di bagian <strong>Menu Spesial</strong>.</li>
+                                <li>Klik tombol <strong>(+)</strong> untuk memasukkan ke keranjang.</li>
+                                <li>Buka keranjang, cek pesanan, dan isi <strong>Nama Anda</strong>.</li>
+                                <li>Klik <strong>Checkout</strong>, pesanan Anda akan otomatis dikirim ke WhatsApp Admin.</li>
+                              </ul>`
+                },
+                'area-kirim': {
+                    title: "Area Pengiriman 🛵",
+                    content: `<p>Saat ini kami melayani pengiriman untuk area:</p>
+                              <ul>
+                                <li><strong>Kota Pasuruan</strong> dan sekitarnya (Bisa menggunakan Kurir Instan/Ojol).</li>
+                                <li>Untuk pengiriman ke luar kota (khusus Brownies & Cookies kering) menggunakan ekspedisi terpercaya (J&T, SiCepat).</li>
+                              </ul>
+                              <p>Silakan chat Admin untuk detail ongkos kirim!</p>`
+                },
+                'faq': {
+                    title: "FAQ (Pertanyaan Umum) ❓",
+                    content: `<ul>
+                                <li><strong>Apakah produk dibuat fresh?</strong><br>Ya! Semua pesanan sistemnya <em>Made by Order</em> / dipanggang setiap hari agar selalu segar.</li>
+                                <li><strong>Berapa lama masa simpannya?</strong><br>Brownies tahan 5-7 hari di suhu ruang, Cookies bisa sampai 1 bulan di toples rapat.</li>
+                                <li><strong>Bisa request ucapan untuk ulang tahun?</strong><br>Tentu bisa! Sampaikan saja melalui chat WA ke Admin.</li>
+                              </ul>`
+                }
+            };
+
+            const infoModal = document.getElementById('info-modal');
+            const infoModalOverlay = document.getElementById('info-modal-overlay');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+
+            window.openInfoModal = (type) => {
+                const data = infoModalData[type];
+                if (data) {
+                    modalTitle.innerHTML = data.title;
+                    modalContent.innerHTML = data.content;
+                    infoModal.classList.add('active');
+                    infoModalOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+
+            window.closeInfoModal = () => {
+                infoModal.classList.remove('active');
+                infoModalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+
+            document.getElementById('close-modal-btn').addEventListener('click', closeInfoModal);
+            infoModalOverlay.addEventListener('click', closeInfoModal);
+
+            // ----------------------------------------------------
+            // IMAGE LIGHTBOX (POPUP GAMBAR)
+            // ----------------------------------------------------
+            const imageLightbox = document.getElementById('image-lightbox');
+            const lightboxImgElement = document.getElementById('lightbox-img-element');
+
+            window.openLightbox = (imageSrc) => {
+                lightboxImgElement.src = imageSrc;
+                imageLightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
+
+            window.closeLightbox = () => {
+                imageLightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+
+            document.getElementById('close-lightbox-btn').addEventListener('click', closeLightbox);
+            imageLightbox.addEventListener('click', (e) => {
+                if (e.target === imageLightbox) closeLightbox();
             });
-            waText += `\n*Total Tagihan: ${formatRupiah(totalTagihan)}*`;
-            waText += "\n\nMohon info ketersediaan dan total pembayarannya ya. Terima kasih! 🍰";
 
-            // Nomor tujuan WhatsApp Anda
-            const waNumber = "6285649681417";
-            const waUrl = `https://api.whatsapp.com/send?phone=${waNumber}&text=${encodeURIComponent(waText)}`;
-            
-            // Buka WhatsApp di tab baru
-            window.open(waUrl, '_blank');
-
-            // Kosongkan keranjang setelah checkout berjalan
-            showToast("Mengarahkan ke WhatsApp... 🎉");
-            cart = []; 
-            renderCart(); 
-            closeCart(); 
-        });
-
-        // ----------------------------------------------------
-        // LOGIKA ULASAN PELANGGAN (REVIEWS)
-        // ----------------------------------------------------
-        // Data ulasan awal (dummy data)
-        let reviewsData = [
-            { name: "Siska Saraswati", rating: 5, text: "Browniesnya beneran fudgy dan nyoklat banget! Anak-anak pada suka." },
-            { name: "Bima Arya", rating: 4, text: "Kue susnya mantap, vlanya lumer. Cuma pengirimannya agak telat dikit." },
-            { name: "Dina Amanda", rating: 5, text: "Sumpah ini cookies terenak yang pernah aku coba. Strawberrynya kerasa pas, gak kemanisan." }
-        ];
-
-        const reviewListEl = document.getElementById('review-list');
-        const reviewForm = document.getElementById('review-form');
-
-        // Fungsi render ulasan ke HTML
-        function renderReviews() {
-            reviewListEl.innerHTML = '';
-            reviewsData.forEach(rev => {
-                const stars = '⭐'.repeat(rev.rating);
-                const reviewCard = document.createElement('div');
-                reviewCard.className = 'review-card';
-                reviewCard.innerHTML = `
-                    <div class="review-header">
-                        <span class="review-name">${rev.name}</span>
-                        <span class="review-stars">${stars}</span>
-                    </div>
-                    <p class="review-text">"${rev.text}"</p>
-                `;
-                reviewListEl.appendChild(reviewCard);
-            });
-        }
-
-        // Fungsi ketika form ulasan disubmit
-        reviewForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('rev-name').value;
-            const rating = parseInt(document.getElementById('rev-rating').value);
-            const text = document.getElementById('rev-text').value;
-
-            // Tambahkan ulasan baru di urutan teratas
-            reviewsData.unshift({ name, rating, text });
-            
+            // Initial Renders
+            renderCart();
             renderReviews();
-            showToast("Terima kasih atas ulasan manismu! 💖");
-            
-            // Reset form
-            reviewForm.reset();
         });
-
-        // ----------------------------------------------------
-        // LOGIKA MODAL POP-UP (BANTUAN/FOOTER)
-        // ----------------------------------------------------
-        const infoModalOverlay = document.getElementById('info-modal-overlay');
-        const infoModal = document.getElementById('info-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalContent = document.getElementById('modal-content');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-
-        // Database konten untuk masing-masing menu bantuan
-        const modalData = {
-            'cara-pesan': {
-                title: '🍰 Cara Memesan',
-                content: `
-                    <ol>
-                        <li>Pilih produk favoritmu di bagian <strong>Menu Spesial</strong>.</li>
-                        <li>Klik tombol tambah <strong>(+)</strong> pada produk yang ingin dibeli.</li>
-                        <li>Buka ikon keranjang belanja di pojok kanan atas untuk mengecek pesananmu.</li>
-                        <li>Pastikan jumlah pesanan sudah benar, lalu klik <strong>Checkout Sekarang</strong>.</li>
-                        <li>Kamu akan otomatis diarahkan ke chat WhatsApp Admin. Tinggal kirim pesannya, dan kami akan memandu proses pembayaran!</li>
-                    </ol>
-                    <p><em>Gampang banget kan? Yuk pesan sekarang!</em></p>
-                `
-            },
-            'area-kirim': {
-                title: '🛵 Area Pengiriman',
-                content: `
-                    <p>Saat ini KitchenFood Putri melayani pengiriman untuk wilayah:</p>
-                    <ul>
-                        <li>📍 <strong>Pasuruan Kota & Kabupaten</strong></li>
-                        <li>📍 <strong>Area Sekitarnya (Sesuai kesepakatan)</strong></li>
-                    </ul>
-                    <br>
-                    <p><strong>Metode Pengiriman:</strong></p>
-                    <ol>
-                        <li><strong>Pick-up / Ambil Sendiri:</strong> Gratis! Kamu bisa langsung ambil ke lokasi kami.</li>
-                        <li><strong>Kurir Lokal / Ojol:</strong> Biaya ongkos kirim akan disesuaikan dengan jarak titik pengantaran (via GoSend/GrabExpress/Kurir kami).</li>
-                    </ol>
-                `
-            },
-            'faq': {
-                title: '🤔 FAQ (Tanya Jawab)',
-                content: `
-                    <p><strong>Q: Apakah kue ini tahan lama?</strong><br>
-                    A: Brownies kami tahan 3-4 hari di suhu ruang, dan hingga 7 hari jika disimpan dalam kulkas tertutup rapat.</p>
-                    
-                    <p><strong>Q: Apakah 100% Halal?</strong><br>
-                    A: Ya! Kami menjamin seluruh bahan yang digunakan 100% Halal dan higienis.</p>
-
-                    <p><strong>Q: Bisa request tambahan tulisan Happy Birthday?</strong><br>
-                    A: Tentu saja bisa! Silakan sampaikan *request* tulisanmu saat konfirmasi pesanan di WhatsApp ya.</p>
-
-                    <p><strong>Q: Pembayarannya lewat apa saja?</strong><br>
-                    A: Kami menerima pembayaran via Transfer Bank (BCA/BRI), DANA, OVO, ShopeePay, dan Cash (khusus pick-up).</p>
-                `
-            }
-        };
-
-        // Fungsi buka modal
-        window.openInfoModal = (type) => {
-            modalTitle.innerHTML = modalData[type].title;
-            modalContent.innerHTML = modalData[type].content;
-            
-            infoModalOverlay.classList.add('active');
-            infoModal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Kunci scroll layar utama
-        };
-
-        // Fungsi tutup modal
-        const closeInfoModal = () => {
-            infoModalOverlay.classList.remove('active');
-            infoModal.classList.remove('active');
-            document.body.style.overflow = ''; // Buka scroll layar utama
-        };
-
-        closeModalBtn.addEventListener('click', closeInfoModal);
-        infoModalOverlay.addEventListener('click', closeInfoModal);
-
-        // ----------------------------------------------------
-        // LOGIKA IMAGE LIGHTBOX (POP-UP GAMBAR)
-        // ----------------------------------------------------
-        const imageLightbox = document.getElementById('image-lightbox');
-        const lightboxImgElement = document.getElementById('lightbox-img-element');
-        const closeLightboxBtn = document.getElementById('close-lightbox-btn');
-
-        // Fungsi Buka Lightbox Gambar
-        window.openLightbox = (imageSrc) => {
-            lightboxImgElement.src = imageSrc;
-            imageLightbox.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Kunci scroll layar utama
-        };
-
-        // Fungsi Tutup Lightbox Gambar
-        const closeLightbox = () => {
-            imageLightbox.classList.remove('active');
-            document.body.style.overflow = ''; // Buka scroll layar utama
-        };
-
-        // Event Listener untuk menutup gambar
-        closeLightboxBtn.addEventListener('click', closeLightbox);
-        imageLightbox.addEventListener('click', (e) => {
-            // Tutup jika yang di-klik adalah background gelapnya (bukan gambarnya)
-            if (e.target === imageLightbox) {
-                closeLightbox();
-            }
-        });
-
-        // Render awal saat halaman dimuat
-        renderCart();
-        renderReviews();
     </script>
 </body>
 </html>
